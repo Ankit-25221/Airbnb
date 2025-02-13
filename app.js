@@ -129,6 +129,9 @@ app.use("/", userRouter);
 //    console.log("sample was saved");
 //    res.send("successful testing");
 //});
+app.get("/", (res,req) => {
+    res.redirect("/listing");
+});
 
 //If user call any route which is not present the error hadler
 //handle this type error
