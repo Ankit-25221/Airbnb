@@ -130,7 +130,7 @@ app.use("/", userRouter);
 //    res.send("successful testing");
 //});
 app.get("/", (req,res) => {
-    res.redirect("/listing");
+    res.redirect("/listings");
 });
 
 //If user call any route which is not present the error hadler
