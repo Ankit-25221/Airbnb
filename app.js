@@ -129,7 +129,7 @@ app.use("/", userRouter);
 //    console.log("sample was saved");
 //    res.send("successful testing");
 //});
-app.get("/", (res,req) => {
+app.get("/", (req,res) => {
     res.redirect("/listing");
 });
 
