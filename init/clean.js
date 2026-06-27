@@ -7,7 +7,9 @@ const Review = require("../models/review.js");
 const Booking = require("../models/booking.js");
 const User = require("../models/user.js");
 
-const MONGO_URL = process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderlust";
+// Check if a database URL was passed as a command-line argument, otherwise fall back to .env or local
+const MONGO_URL = process.argv[2] || process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderlust";
+
 
 async function main() {
     await mongoose.connect(MONGO_URL);
