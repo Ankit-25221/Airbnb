@@ -23,19 +23,23 @@ const User = require("./models/user.js");
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
+const wishlistRouter = require("./routes/wishlist.js");
+const bookingRouter = require("./routes/booking.js");
+const apiRouter = require("./routes/api.js");
 
 
 //const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
-const dbUrl = process.env.ATLASDB_URL;
+const dbUrl = process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderlust";
 async function main() {
-    await mongoose.connect(dbUrl);    
+    await mongoose.connect(dbUrl);
 }
 main()
     .then(() => {
-        console.log("connected to DB");
+        console.log("Connected to MongoDB");
     })
     .catch((err) => {
-        console.log(err);
+        console.error("MongoDB connection failed:", err.message);
+        process.exit(1); // Exit on DB failure — don't serve a broken app
     });
 
 
@@ -43,31 +47,41 @@ main()
 app.set("view engine","ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
+// Trust proxy — required for Render, Railway, Heroku (fixes session/HTTPS)
+app.set("trust proxy", 1);
+
+const storeSecret = process.env.SECRET || "wanderlust_default_dev_secret_keys";
+
 const store = MongoStore.create({
     mongoUrl: dbUrl,
     crypto: {
-        secret: process.env.SECRET,
+        secret: storeSecret,
     },
     touchAfter: 24 * 3600,
 });
 
-store.on("error", () => {
-    console.log("ERROR in MONGO SESSION STORE",err);
+store.on("error", (err) => {
+    console.error("ERROR in MONGO SESSION STORE", err);
 });
+
+const isProduction = process.env.NODE_ENV === "production";
 
 const sessionOptions = {
     store,
-    secret: process.env.SECRET,
+    secret: storeSecret,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,  // Don't create session until something is stored
     cookie: {
-        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true
+        httpOnly: true,
+        secure: isProduction,   // Only send over HTTPS in production
+        sameSite: isProduction ? "strict" : "lax",
     },
 };
 
@@ -115,6 +129,29 @@ app.use("/listings/:id/reviews", reviewRouter);
 // Express router for user
 app.use("/", userRouter);
 
+// Express router for wishlist
+app.use("/wishlist", wishlistRouter);
+
+// Express router for bookings
+app.use("/bookings", bookingRouter);
+
+// Express router for AI API
+app.use("/api", apiRouter);
+
+// Root redirect
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
+
+// Static pages (fixes 404 on footer links)
+app.get("/privacy", (req, res) => {
+    res.render("privacy.ejs");
+});
+
+app.get("/terms", (req, res) => {
+    res.render("terms.ejs");
+});
+
 
 //app.get("/testListing", async (req, res) => {
 //    let sampleListing = new Listing ({
@@ -129,9 +166,6 @@ app.use("/", userRouter);
 //    console.log("sample was saved");
 //    res.send("successful testing");
 //});
-app.get("/", (req,res) => {
-    res.redirect("/listings");
-});
 
 //If user call any route which is not present the error hadler
 //handle this type error
@@ -140,12 +174,19 @@ app.all("*", (req,res,next) => {
 });
 
 //Middlewares for error handling
-app.use((err,req,res,next) => {
-    let {statusCode =500, message="Something went wrong!"} = err;
-    res.status(statusCode).render("error.ejs", {message});
-    // res.status(statusCode).send(message);
+app.use((err, req, res, next) => {
+    const { statusCode = 500, message = "Something went wrong!" } = err;
+    // In production, don't expose internal error details
+    const displayMessage = process.env.NODE_ENV === "production" && statusCode === 500
+        ? "An internal server error occurred. Please try again later."
+        : message;
+    if (process.env.NODE_ENV !== "production") {
+        console.error("[ERROR]", err);
+    }
+    res.status(statusCode).render("error.ejs", { message: displayMessage });
 });
 
-app.listen(8080, () => {
-    console.log("server is listerning to port 8080");
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+    console.log(`server is listening to port ${port}`);
 });

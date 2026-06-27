@@ -1,8 +1,13 @@
+// Load environment variables from .env file
+require('dotenv').config();
+
 const mongoose = require("mongoose");
 const initData = require("./data.js");
 const Listing = require("../models/listing.js");
+const User = require("../models/user.js");
 
-const MONGO_URL ="mongodb://127.0.0.1:27017/wanderlust";
+// Use Atlas URL from .env if available, otherwise fall back to local MongoDB
+const MONGO_URL = process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderlust";
 
 main()
 .then(() => {
@@ -17,7 +22,14 @@ async function main() {
 }
 const initDB = async () => {
     await Listing.deleteMany({});
-    initData.data = initData.data.map((obj) => ({ ...obj, owner: "6791ec54ab84d023ca3b35cb"}));
+    
+    let user = await User.findOne({});
+    if (!user) {
+        let fakeUser = new User({ email: "demouser@gmail.com", username: "demouser" });
+        user = await User.register(fakeUser, "password123");
+    }
+
+    initData.data = initData.data.map((obj) => ({ ...obj, owner: user._id}));
     await Listing.insertMany(initData.data);
     console.log("Data was initialized");
 };

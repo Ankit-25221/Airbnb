@@ -1,23 +1,38 @@
-<% if(success && success.length) { %>
-<div class="alert alert-success alert-dismissible fade show col-6 offset-3" role="alert">
-    <%= success %>
-    <button
-     type="button"
-     class="btn-close"
-     data-bs-dismiss="alert"
-     aria-label="Close"
-     ></button>
-</div>
-<% } %>
-
-<% if(error && error.length) { %>
-    <div class="alert alert-danger alert-dismissible fade show col-6 offset-3" role="alert">
-        <%= error %>
-        <button
-         type="button"
-         class="btn-close"
-         data-bs-dismiss="alert"
-         aria-label="Close"
-         ></button>
+<!-- Toast flash notifications -->
+<div class="wl-toast-container" id="wl-toasts">
+  <% if(success && success.length) { %>
+  <div class="wl-toast wl-toast-success" role="alert">
+    <i class="fa-solid fa-circle-check wl-toast-icon"></i>
+    <div class="wl-toast-body">
+      <p class="wl-toast-message"><%= success %></p>
     </div>
-    <% } %>
+    <button class="wl-toast-close" onclick="dismissToast(this)">&times;</button>
+  </div>
+  <% } %>
+
+  <% if(error && error.length) { %>
+  <div class="wl-toast wl-toast-error" role="alert">
+    <i class="fa-solid fa-circle-exclamation wl-toast-icon"></i>
+    <div class="wl-toast-body">
+      <p class="wl-toast-message"><%= error %></p>
+    </div>
+    <button class="wl-toast-close" onclick="dismissToast(this)">&times;</button>
+  </div>
+  <% } %>
+</div>
+
+<script>
+  // Auto-dismiss toasts after 4 seconds
+  function dismissToast(btn) {
+    const toast = btn.closest('.wl-toast');
+    toast.classList.add('wl-toast-out');
+    setTimeout(() => toast.remove(), 300);
+  }
+
+  document.querySelectorAll('.wl-toast').forEach(toast => {
+    setTimeout(() => {
+      toast.classList.add('wl-toast-out');
+      setTimeout(() => toast.remove(), 300);
+    }, 4000);
+  });
+</script>

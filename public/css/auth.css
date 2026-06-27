@@ -1,0 +1,164 @@
+/* ==========================================
+   WanderLust — Auth Pages
+   Login & Signup centered card layout
+   ========================================== */
+
+.wl-auth-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 12rem);
+  padding: 2rem 1rem;
+}
+
+.wl-auth-card {
+  background: var(--wl-white);
+  border-radius: var(--wl-radius-lg);
+  padding: 2.5rem 2.5rem 2rem;
+  box-shadow: var(--wl-shadow-md);
+  border: 1px solid var(--wl-border-light);
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gradient accent line at top */
+.wl-auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--wl-gradient-primary);
+}
+
+.wl-auth-title {
+  font-size: var(--wl-font-size-2xl);
+  font-weight: 700;
+  color: var(--wl-black);
+  margin-bottom: 0.35rem;
+  text-align: center;
+}
+
+.wl-auth-subtitle {
+  font-size: var(--wl-font-size-sm);
+  color: var(--wl-gray);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.wl-auth-card .form-control {
+  border-radius: var(--wl-radius);
+  padding: 0.8rem 1rem;
+  font-size: var(--wl-font-size-base);
+  border: 1.5px solid var(--wl-border);
+}
+
+.wl-auth-card .form-control:focus {
+  border-color: var(--wl-primary);
+  box-shadow: 0 0 0 3px var(--wl-primary-glow);
+}
+
+.wl-auth-card .form-label {
+  font-size: var(--wl-font-size-sm);
+  font-weight: 600;
+  color: var(--wl-dark);
+}
+
+.wl-auth-btn {
+  width: 100%;
+  background: var(--wl-gradient-primary);
+  color: var(--wl-white);
+  border: none;
+  padding: 0.8rem;
+  border-radius: var(--wl-radius);
+  font-size: var(--wl-font-size-base);
+  font-weight: 600;
+  font-family: var(--wl-font);
+  cursor: pointer;
+  transition: all var(--wl-transition);
+  margin-top: 0.5rem;
+}
+
+.wl-auth-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(255, 56, 92, 0.35);
+  color: var(--wl-white);
+}
+
+/* Divider */
+.wl-auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  color: var(--wl-gray-light);
+  font-size: var(--wl-font-size-xs);
+}
+
+.wl-auth-divider::before,
+.wl-auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--wl-border-light);
+}
+
+/* Footer link */
+.wl-auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: var(--wl-font-size-sm);
+  color: var(--wl-gray);
+}
+
+.wl-auth-footer a {
+  color: var(--wl-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.wl-auth-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+  .wl-auth-card {
+    padding: 2rem 1.5rem;
+    margin: 0 0.5rem;
+  }
+}
+
+/* Password visibility toggle */
+.wl-password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.wl-password-wrap .form-control {
+  padding-right: 3rem;
+}
+
+.wl-pwd-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--wl-gray);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: color var(--wl-transition);
+  z-index: 5;
+  outline: none;
+}
+
+.wl-pwd-toggle:hover {
+  color: var(--wl-primary);
+}

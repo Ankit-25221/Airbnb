@@ -1,0 +1,416 @@
+/* ==========================================
+   WanderLust — Show Page
+   Listing detail, reviews, booking card, map
+   ========================================== */
+
+/* Booking section utility */
+.wl-booking-card form.needs-validation button[type="submit"] {
+  display: block;
+  width: 100%;
+}
+
+/* Cancel trip button for bookings page */
+.wl-cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--wl-font);
+  color: var(--wl-error);
+  background: transparent;
+  border: 1.5px solid var(--wl-error);
+  border-radius: var(--wl-radius-full);
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  transition: all var(--wl-transition);
+}
+
+.wl-cancel-btn:hover {
+  background: var(--wl-error);
+  color: var(--wl-white);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(193, 53, 21, 0.25);
+}
+
+/* Show page layout */
+.wl-show-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 0 3rem;
+}
+
+/* Header */
+.wl-show-header {
+  margin-bottom: 1.5rem;
+}
+
+.wl-show-title {
+  font-size: var(--wl-font-size-3xl);
+  font-weight: 700;
+  color: var(--wl-black);
+  margin-bottom: 0.25rem;
+}
+
+.wl-show-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.wl-show-meta-item {
+  font-size: var(--wl-font-size-sm);
+  color: var(--wl-gray);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.wl-show-meta-item i {
+  color: var(--wl-primary);
+}
+
+/* Hero image */
+.wl-show-image {
+  width: 100%;
+  border-radius: var(--wl-radius-lg);
+  object-fit: cover;
+  max-height: 480px;
+  box-shadow: var(--wl-shadow);
+}
+
+/* Two column layout */
+.wl-show-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+/* Left column — details */
+.wl-show-details {
+  min-width: 0;
+}
+
+.wl-show-owner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--wl-border-light);
+}
+
+.wl-owner-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--wl-gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--wl-white);
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.wl-owner-name {
+  font-weight: 600;
+  color: var(--wl-black);
+  font-size: var(--wl-font-size-base);
+}
+
+.wl-owner-label {
+  font-size: var(--wl-font-size-xs);
+  color: var(--wl-gray);
+}
+
+.wl-show-description {
+  font-size: var(--wl-font-size-base);
+  color: var(--wl-dark);
+  line-height: 1.7;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--wl-border-light);
+}
+
+/* Location chips */
+.wl-location-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--wl-bg);
+  color: var(--wl-dark);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--wl-radius-full);
+  font-size: var(--wl-font-size-sm);
+  font-weight: 500;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.wl-location-chip i {
+  color: var(--wl-primary);
+  font-size: 0.75rem;
+}
+
+/* Price badge */
+.wl-price-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 1rem 0;
+}
+
+.wl-price-amount {
+  font-size: var(--wl-font-size-2xl);
+  font-weight: 700;
+  color: var(--wl-black);
+}
+
+.wl-price-unit {
+  font-size: var(--wl-font-size-base);
+  color: var(--wl-gray);
+  font-weight: 400;
+}
+
+/* Action buttons */
+.wl-show-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 0;
+}
+
+/* Right column — Booking card */
+.wl-booking-card {
+  background: var(--wl-white);
+  border: 1px solid var(--wl-border);
+  border-radius: var(--wl-radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--wl-shadow-md);
+  position: sticky;
+  top: 6rem;
+  height: fit-content;
+}
+
+.wl-booking-price {
+  font-size: var(--wl-font-size-xl);
+  font-weight: 700;
+  color: var(--wl-black);
+  margin-bottom: 1.25rem;
+}
+
+.wl-booking-price span {
+  font-size: var(--wl-font-size-base);
+  font-weight: 400;
+  color: var(--wl-gray);
+}
+
+/* Map section */
+.wl-map-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--wl-border-light);
+}
+
+.wl-map-title {
+  font-size: var(--wl-font-size-xl);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+#map {
+  height: 450px;
+  width: 100%;
+  border-radius: var(--wl-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--wl-shadow-md);
+}
+
+/* Currency toggle button */
+.wl-currency-toggle {
+  flex-shrink: 0;
+}
+
+.wl-currency-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: var(--wl-font);
+  color: var(--wl-dark);
+  background: var(--wl-bg);
+  border: 1.5px solid var(--wl-border);
+  border-radius: var(--wl-radius-full);
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+  transition: all var(--wl-transition);
+  letter-spacing: 0.02em;
+}
+
+.wl-currency-btn:hover {
+  background: var(--wl-primary);
+  border-color: var(--wl-primary);
+  color: var(--wl-white);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(255, 56, 92, 0.25);
+}
+
+.wl-map-note {
+  font-size: var(--wl-font-size-xs);
+  color: var(--wl-gray);
+  margin-top: 0.6rem;
+}
+
+/* Reviews section */
+.wl-reviews-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--wl-border-light);
+}
+
+.wl-reviews-title {
+  font-size: var(--wl-font-size-xl);
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+
+/* Review card */
+.wl-review-card {
+  background: var(--wl-white);
+  border: 1px solid var(--wl-border-light);
+  border-radius: var(--wl-radius);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  transition: all var(--wl-transition);
+}
+
+.wl-review-card:hover {
+  box-shadow: var(--wl-shadow);
+}
+
+.wl-review-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.wl-review-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--wl-gradient-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--wl-white);
+  font-weight: 600;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.wl-review-author {
+  font-weight: 600;
+  font-size: var(--wl-font-size-sm);
+  color: var(--wl-black);
+}
+
+.wl-review-date {
+  font-size: var(--wl-font-size-xs);
+  color: var(--wl-gray);
+}
+
+.wl-review-comment {
+  font-size: var(--wl-font-size-sm);
+  color: var(--wl-dark);
+  line-height: 1.6;
+  margin: 0.5rem 0;
+}
+
+/* AI Summary card */
+.wl-ai-summary {
+  background: var(--wl-gradient-subtle);
+  border: 1px solid #FFE4E9;
+  border-radius: var(--wl-radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.wl-ai-summary-title {
+  font-size: var(--wl-font-size-sm);
+  font-weight: 600;
+  color: var(--wl-primary-dark);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.wl-ai-summary p {
+  font-size: var(--wl-font-size-sm);
+  color: var(--wl-dark);
+  line-height: 1.6;
+  margin-bottom: 0.35rem;
+}
+
+/* Sections scroll spacing */
+.wl-map-section,
+.wl-reviews-section {
+  scroll-margin-top: 100px;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--wl-border-light);
+}
+
+/* Review form */
+.wl-review-form {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--wl-border-light);
+}
+
+.wl-review-form h4 {
+  font-size: var(--wl-font-size-lg);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .wl-show-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .wl-booking-card {
+    position: static;
+  }
+
+  .wl-show-title {
+    font-size: var(--wl-font-size-2xl);
+  }
+}
+
+@media (max-width: 600px) {
+  .wl-show-container {
+    padding: 1rem 0.5rem 2rem;
+  }
+
+  .wl-show-image {
+    max-height: 280px;
+  }
+
+  #map {
+    height: 300px;
+  }
+}
+
+/* Wishlist button active state styling */
+.wishlisted-btn .heart-icon {
+  color: var(--wl-primary) !important;
+}

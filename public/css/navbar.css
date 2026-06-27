@@ -1,0 +1,225 @@
+/* ==========================================
+   WanderLust — Navbar
+   Glassmorphism, search bar, navigation
+   ========================================== */
+
+.wl-navbar {
+  height: auto;
+  min-height: 4.5rem;
+  padding: 0.75rem 0;
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid var(--wl-border-light);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all var(--wl-transition);
+}
+
+/* Glassmorphism with fallback */
+@supports (backdrop-filter: blur(10px)) {
+  .wl-navbar {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+}
+
+.wl-navbar.scrolled {
+  box-shadow: var(--wl-shadow);
+}
+
+/* Brand */
+.wl-brand {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--wl-primary) !important;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: opacity var(--wl-transition);
+}
+
+.wl-brand:hover {
+  opacity: 0.85;
+  color: var(--wl-primary) !important;
+}
+
+.wl-brand i {
+  font-size: 1.6rem;
+  color: var(--wl-primary);
+}
+
+/* Nav links — consistent pill hover for ALL nav items */
+.wl-nav-link {
+  color: var(--wl-dark) !important;
+  font-size: var(--wl-font-size-sm);
+  font-weight: 500;
+  padding: 0.45rem 0.9rem !important;
+  border-radius: var(--wl-radius-full);
+  transition: background var(--wl-transition), color var(--wl-transition), box-shadow var(--wl-transition);
+  text-decoration: none !important;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.wl-nav-link:hover {
+  background: rgba(72, 72, 72, 0.08);
+  color: var(--wl-black) !important;
+  box-shadow: none;
+}
+
+.wl-nav-link.active {
+  color: var(--wl-primary) !important;
+  font-weight: 600;
+  background: rgba(255, 56, 92, 0.08);
+}
+
+/* Search bar */
+.wl-search-form {
+  display: flex;
+  align-items: center;
+  background: var(--wl-white);
+  border: 1.5px solid var(--wl-border);
+  border-radius: var(--wl-radius-full);
+  padding: 0.25rem 0.25rem 0.25rem 1.2rem;
+  transition: all var(--wl-transition);
+  box-shadow: var(--wl-shadow-sm);
+  max-width: 360px;
+}
+
+.wl-search-form:focus-within {
+  border-color: var(--wl-primary);
+  box-shadow: 0 0 0 3px var(--wl-primary-glow);
+}
+
+.wl-search-input {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  font-size: var(--wl-font-size-sm);
+  font-family: var(--wl-font);
+  color: var(--wl-black);
+  padding: 0.4rem 0.5rem;
+  width: 100%;
+  min-width: 160px;
+  box-shadow: none !important;
+}
+
+.wl-search-input::placeholder {
+  color: var(--wl-gray-light);
+}
+
+.wl-search-btn {
+  background: var(--wl-gradient-primary);
+  color: var(--wl-white);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--wl-transition);
+  font-size: 0.85rem;
+}
+
+.wl-search-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(255, 56, 92, 0.35);
+  color: var(--wl-white);
+}
+
+/* User nav section */
+.wl-user-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+/* Icon nav buttons (heart, calendar) */
+.wl-nav-icon {
+  color: var(--wl-dark) !important;
+  font-size: 1.05rem;
+  padding: 0.5rem 0.65rem !important;
+  border-radius: 50%;
+  transition: background var(--wl-transition), color var(--wl-transition);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wl-nav-icon:hover {
+  background: rgba(72, 72, 72, 0.08);
+  color: var(--wl-primary) !important;
+}
+
+.wl-nav-icon .fa-heart {
+  font-size: 1.05rem;
+}
+
+/* ---- Auth buttons (pre-login state) ---- */
+.wl-nav-auth-btn {
+  font-size: var(--wl-font-size-sm);
+  font-weight: 600;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--wl-radius-full);
+  text-decoration: none !important;
+  transition: background var(--wl-transition), color var(--wl-transition), transform var(--wl-transition), box-shadow var(--wl-transition);
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Log In button: subtle pill, never goes white */
+.wl-btn-login {
+  color: var(--wl-dark) !important;
+  background: transparent;
+  border: 1.5px solid var(--wl-border);
+}
+
+.wl-btn-login:hover {
+  background: rgba(72, 72, 72, 0.08) !important;
+  color: var(--wl-black) !important;
+  border-color: var(--wl-dark);
+  transform: none;
+}
+
+/* Sign Up button: filled dark pill */
+.wl-btn-signup {
+  background: var(--wl-black);
+  color: var(--wl-white) !important;
+  border: 1.5px solid var(--wl-black);
+}
+
+.wl-btn-signup:hover {
+  background: var(--wl-primary);
+  border-color: var(--wl-primary);
+  color: var(--wl-white) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 56, 92, 0.3);
+}
+
+/* Mobile responsive */
+@media (max-width: 767px) {
+  .wl-navbar {
+    padding: 0.5rem 0;
+  }
+
+  .wl-search-form {
+    max-width: 100%;
+    margin: 0.5rem 0;
+  }
+
+  .wl-user-nav {
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}

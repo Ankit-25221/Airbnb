@@ -15,9 +15,9 @@ router
     .get(wrapAsync(listingController.index)) //Index.ejs route
     .post(  //Create Route
         isLoggedIn,
-        //validateListing,
         upload.single("listing[image]"),
-        wrapAsync ( listingController.createListing)
+        validateListing,
+        wrapAsync(listingController.createListing)
     );
 
 //New Route

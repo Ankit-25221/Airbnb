@@ -1,22 +1,44 @@
-const { model } = require("mongoose");
 const Listing = require("../models/listing");
-const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
-const { query, response } = require("express");
-const mapToken = process.env.MAP_TOKEN;
-const geocodingClient = mbxGeocoding({ accessToken: mapToken });
+const { config, geocoding } = require('@maptiler/client');
+const mapToken = process.env.MAPTILER_API_KEY || process.env.MAP_TOKEN || process.env.MAPBOX_TOKEN;
+config.apiKey = mapToken;
 
-//index route
+// INDEX route — supports ?search= and ?category= query params
 module.exports.index = async (req, res) => {
-    const allListings = await Listing.find({});
-    res.render("listings/index.ejs", { allListings });
+    const { search, category } = req.query;
+    let filter = {};
+
+    if (search) {
+        // Case-insensitive search across title, location, country
+        filter.$or = [
+            { title:    { $regex: search, $options: "i" } },
+            { location: { $regex: search, $options: "i" } },
+            { country:  { $regex: search, $options: "i" } },
+        ];
+    }
+
+    if (category && category !== "all") {
+        filter.category = category;
+    }
+
+    const allListings = await Listing.find(filter);
+    
+    let userWishlist = [];
+    if (req.user) {
+        const User = require("../models/user");
+        const user = await User.findById(req.user._id);
+        userWishlist = user ? user.wishlist : [];
+    }
+
+    res.render("listings/index.ejs", { allListings, searchQuery: search || "", activeCategory: category || "", userWishlist });
 };
 
-//new route
+// NEW route — render form
 module.exports.renderNewForm = (req, res) => {
     res.render("listings/new.ejs");
 };
 
-//show route
+// SHOW route
 module.exports.showListing = async (req, res) => {
     let { id } = req.params;
     const listing = await Listing.findById(id)
@@ -24,101 +46,112 @@ module.exports.showListing = async (req, res) => {
             path: "reviews",
             populate: {
                 path: "author",
-        },
-    })
+            },
+        })
         .populate("owner");
-    if(!listing) {
+
+    if (!listing) {
         req.flash("error", "Listing you requested for does not exist!");
-        res.redirect("/listings");
+        return res.redirect("/listings");
     }
-    console.log(listing);
-    res.render("listings/show.ejs", { listing });
-    };
 
+    let userWishlist = [];
+    if (req.user) {
+        const User = require("../models/user");
+        const user = await User.findById(req.user._id);
+        userWishlist = user ? user.wishlist : [];
+    }
 
-    //create route
-module.exports.createListing = async (req, res,next) => {
-    // use mapbox
-    //let response = await geocodingClient
-        //.forwardGeocode({
-        //query: req.body.listing.location,
-        //limit: 1,
-    //})
-    //.send();
+    // Retrieve confirmed booking dates to disable them on calendar
+    const Booking = require("../models/booking");
+    const bookings = await Booking.find({ listing: id, status: "confirmed" });
+    const bookedDates = bookings.map(b => ({
+        from: b.startDate,
+        to: b.endDate
+    }));
 
+    res.render("listings/show.ejs", { listing, mapToken, userWishlist, bookedDates });
+};
 
+// CREATE route
+module.exports.createListing = async (req, res, next) => {
+    // Geocode the listing location to get coordinates for the map
+    let response;
+    try {
+        response = await geocoding.forward(req.body.listing.location, { limit: 1 });
+    } catch (err) {
+        console.error("MapTiler geocoding error:", err);
+    }
+
+    let url = req.file.path;
+    let filename = req.file.filename;
         
-        //  if(!req.body.listing) {
-        //      throw new ExpressError(400,"Send Valid Data for Listing");
-        //  }
-          // we handling error on schema module if any data is missing
-          // But this method is not good because code line so large
-          // So we Use joi ---> npm install joi first 
-  
-         // const newListing = new Listing(req.body.listing);
-         // if(newListing.title) {
-          //    throw new ExpressError(400,"Title is missing!");
-         // }
-          //if(newListing.description) {
-           //   throw new ExpressError(400,"Description is missing!");
-          //}
-          //if(newListing.location) {
-           //   throw new ExpressError(400,"Location is missing!");
-          //}
-  
-          // let {title, description, image, price, country, location} = req.body;
-      let url = req.file.path;
-      let filename = req.file.filename;
-          
-      const newListing = new Listing(req.body.listing);
-      newListing.owner = req.user._id;     
-      newListing.image = {url, filename};
-      //newListing.geometry =  response.body.features[0].geometry;
-      await newListing.save();
+    const newListing = new Listing(req.body.listing);
+    newListing.owner = req.user._id;
+    newListing.image = { url, filename };
+    
+    // Save the geocoded geometry (coordinates) for the map
+    if (response && response.features && response.features.length > 0) {
+        newListing.geometry = response.features[0].geometry;
+    } else {
+        // Fallback coordinates (New Delhi) if geocoding fails or returns no features
+        newListing.geometry = {
+            type: "Point",
+            coordinates: [77.209, 28.6139]
+        };
+    }
+    await newListing.save();
 
-      //let savedListing = await newListing.save();
-      //console.log(savedListing);
-      req.flash("success", "Now Listing Created!");
-      res.redirect("/listings");
-  };
+    req.flash("success", "New Listing Created!");
+    res.redirect("/listings");
+};
 
-  //edit route
+// EDIT route — render edit form
 module.exports.renderEditForm = async (req, res) => {
     let { id } = req.params;
     const listing = await Listing.findById(id);
     if (!listing) {
         req.flash("error", "Listing you requested for does not exist!");
-        res.redirect("/listings");
+        return res.redirect("/listings");
     }
 
     let originalImageUrl = listing.image.url;
     originalImageUrl = originalImageUrl.replace("/upload", "/upload/w_250");
-    res.render("listings/edit.ejs", { listing , originalImageUrl});
+    res.render("listings/edit.ejs", { listing, originalImageUrl });
 };
 
-//update route
+// UPDATE route
 module.exports.updateListing = async (req, res) => {
-    //if(!req.body.listing) {
-        //throw new ExpressError(400,"Send Valid Data for Listing");
-   // }
-let { id } = req.params;
-let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    let { id } = req.params;
+    let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
 
-if (typeof req.file !== "undefined") {
-let url = req.file.path;
-let filename = req.file.filename;
-listing.image = {url, filename};
-await listing.save();
-}
-req.flash("success", "Listing Updated!");
-res.redirect(`/listings/${ id }`);
+    if (typeof req.file !== "undefined") {
+        let url = req.file.path;
+        let filename = req.file.filename;
+        listing.image = { url, filename };
+    }
+
+    // Re-geocode if the location has changed
+    if (req.body.listing.location && req.body.listing.location !== listing.location) {
+        try {
+            let response = await geocoding.forward(req.body.listing.location, { limit: 1 });
+            if (response && response.features && response.features.length > 0) {
+                listing.geometry = response.features[0].geometry;
+            }
+        } catch (err) {
+            console.error("MapTiler geocoding error on update:", err);
+        }
+    }
+
+    await listing.save();
+    req.flash("success", "Listing Updated!");
+    res.redirect(`/listings/${id}`);
 };
 
-//delete route
+// DELETE route
 module.exports.destroyListing = async (req, res) => {
     let { id } = req.params;
-    let deletedListing = await Listing.findByIdAndDelete(id);
-    console.log(deletedListing);
+    await Listing.findByIdAndDelete(id);
     req.flash("success", "Listing Deleted!");
     res.redirect("/listings");
 };

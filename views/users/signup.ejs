@@ -1,41 +1,89 @@
 <% layout("/layouts/boilerplate") %>
 
-<div class="row mt-3">
-    <h1 class="col-6 offset-3">SignUp on Wanderlust</h1>
-    <div class="col-6 offset-3">
-        <form action="/signup" method="POST" class=" needs-validation" novalidate>
-            <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input
-            name="username"
-            id="username"
-            type="text"
-            class="form-control"
-            required
-            >
-            <div class="valid-feedback">Looks good!</div>
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input
-            name="email"
-            id="email"
-            type="email"
-            class="form-control"
-            required
-            >
-        </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input
+<div class="wl-auth-wrapper">
+  <div class="wl-auth-card">
+    <h2 class="wl-auth-title">Create Account</h2>
+    <p class="wl-auth-subtitle">Join WanderLust and discover unique stays around the world</p>
+    
+    <form action="/signup" method="POST" class="needs-validation" novalidate>
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input
+          name="username"
+          id="username"
+          type="text"
+          class="form-control"
+          placeholder="Choose a username"
+          required
+          autocomplete="username"
+        >
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please choose a username.</div>
+      </div>
+      
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input
+          name="email"
+          id="email"
+          type="email"
+          class="form-control"
+          placeholder="your.email@example.com"
+          required
+          autocomplete="email"
+        >
+        <div class="invalid-feedback">Please enter a valid email address.</div>
+      </div>
+      
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <div class="wl-password-wrap">
+          <input
             name="password"
             id="password"
             type="password"
             class="form-control"
+            placeholder="••••••••"
             required
-            >
+            autocomplete="new-password"
+            minlength="6"
+          >
+          <button 
+            type="button" 
+            class="wl-pwd-toggle" 
+            onclick="togglePasswordVisibility('password', this)"
+            title="Show/hide password"
+            aria-label="Toggle password visibility"
+          >
+            <i class="fa-regular fa-eye"></i>
+          </button>
         </div>
-        <button class="btn btn-success">SignUp</button>
-        </form>
+        <div class="invalid-feedback">Password must be at least 6 characters.</div>
+      </div>
+      
+      <button class="wl-auth-btn" type="submit">Sign Up</button>
+    </form>
+
+    <div class="wl-auth-divider">or</div>
+
+    <div class="wl-auth-footer">
+      Already have an account? <a href="/login">Log in</a>
     </div>
+  </div>
 </div>
+
+<script>
+function togglePasswordVisibility(inputId, btn) {
+  const input = document.getElementById(inputId);
+  const icon = btn.querySelector('i');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'fa-regular fa-eye-slash';
+    btn.title = 'Hide password';
+  } else {
+    input.type = 'password';
+    icon.className = 'fa-regular fa-eye';
+    btn.title = 'Show password';
+  }
+}
+</script>

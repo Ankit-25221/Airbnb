@@ -1,86 +1,193 @@
 <% layout("/layouts/boilerplate") -%>
-<div class="row mt-3">
-    <div class="col-8 offset-2">
-    <h3>Create a New Listing</h3>
-    <br>
-    <form 
-    method="POST" 
-    action="/listings" 
-    novalidate 
-    class="needs-validation" 
-    enctype="multipart/form-data"
-    >
 
-        <div class="mb-3">
-            <label for="title" class="form-label">Title</label>
-        <input
-         type="text" 
-         placeholder="Add a Catchy Title" 
-         name="listing[title]" 
-         class="form-control"
-         required 
-         />
-         <div class="valid-feedback">Title Looks Good!</div>   
-        </div>
+<div class="row mt-4 mb-4 justify-content-center">
+  <div class="col-lg-8 col-md-10">
+    <div class="wl-form-card">
+      <h3 class="wl-form-title">Create a New Listing</h3>
+      <p class="wl-form-subtitle">Share your space with travelers from around the world</p>
 
-        <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea 
-            name="listing[description]"
+      <form 
+        method="POST" 
+        action="/listings" 
+        novalidate 
+        class="needs-validation" 
+        enctype="multipart/form-data"
+      >
+
+        <div class="wl-form-group">
+          <label for="title" class="wl-label">Title</label>
+          <input
+            type="text" 
+            placeholder="Add a catchy title for your listing" 
+            name="listing[title]" 
+            id="title"
             class="form-control"
-            required
-            ></textarea>
-            <div class="invalid-feedback">Please Enter a Short Description</div>
+            required 
+          />
+          <div class="valid-feedback">Title looks good!</div>   
         </div>
 
-        <div class="mb-3 ">
-            <label for="image" class="form-label">Upload Listing Image</label>
-            <input 
+        <div class="wl-form-group" style="background: var(--wl-bg); padding: 1.25rem; border-radius: var(--wl-radius); border: 1px solid var(--wl-border-light); margin-bottom: 1.5rem;">
+          <label class="wl-label d-flex align-items-center justify-content-between">
+            <span><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--wl-primary); margin-right: 0.35rem;"></i>AI Description Assistant</span>
+            <span class="badge bg-primary-subtle text-primary" style="font-size: 0.7rem;">Gemini Powered</span>
+          </label>
+          <p style="font-size: 0.8rem; color: var(--wl-gray); margin-bottom: 0.75rem;">Enter a few comma-separated keywords (e.g. rustic, beach view, wifi, modern) to auto-generate a description.</p>
+          <div class="input-group">
+            <input type="text" id="aiKeywords" class="form-control" placeholder="rustic, ocean views, pool, spacious...">
+            <button class="btn btn-wl-primary" type="button" id="btnGenerateAI" style="border-radius: 0 var(--wl-radius) var(--wl-radius) 0; height: 100%;">
+              <span id="aiSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none; margin-right: 0.35rem;"></span>
+              Generate
+            </button>
+          </div>
+        </div>
+
+        <div class="wl-form-group">
+          <label for="description" class="wl-label">Description</label>
+          <textarea 
+            name="listing[description]"
+            id="description"
+            class="form-control"
+            rows="4"
+            placeholder="Describe your space — what makes it special?"
+            required
+          ></textarea>
+          <div class="invalid-feedback">Please enter a short description</div>
+        </div>
+
+        <div class="wl-form-group">
+          <label for="image" class="wl-label">Upload Listing Image</label>
+          <input 
             type="file"  
             name="listing[image]" 
+            id="image"
             class="form-control"
-            >
+            accept="image/png, image/jpg, image/jpeg"
             required
+          >
+          <div class="invalid-feedback">Please upload an image</div>
         </div>
 
-        <div class="row">
+        <div class="wl-form-row">
+          <div class="wl-form-group">
+            <label for="price" class="wl-label">Price (per night ₹)</label>
+            <input 
+              type="number"
+              placeholder="1200" 
+              name="listing[price]" 
+              id="price"
+              class="form-control"
+              min="0"
+              required
+            >
+            <div class="invalid-feedback">Price should be valid</div> 
+          </div>
+          
+          <div class="wl-form-group">
+            <label for="country" class="wl-label">Country</label>
+            <input type="text"
+              placeholder="India"
+              name="listing[country]" 
+              id="country"
+              class="form-control"
+              required
+            >
+            <div class="invalid-feedback">Country name should be valid</div>
+          </div>
 
-            <div class="mb-3 col-md-4">
-                <label for="price" class="form-label">Price</label>
-                <input 
-                 placeholder="1200" 
-                 name="listing[price]" 
-                 class="form-control"
-                 required
-                 >
-                 <div class="invalid-feedback">Price Should be Valid</div> 
-            </div>
-            
-            <div class="mb-3 col-md-8">
-                <label for="country" class="form-label">Country</label>
-                <input type="text"
-                 placeholder="India"
-                 name="listing[country]" 
-                 class="form-control"
-                 required
-                 >
-                 <div class="invalid-feedback">Country Name Should be Valid</div>
-            </div>
+          <div class="wl-form-group">
+            <label for="category" class="wl-label">Category</label>
+            <select name="listing[category]" id="category" class="form-select">
+              <option value="">Select a Category</option>
+              <option value="Trending">Trending</option>
+              <option value="Rooms">Rooms</option>
+              <option value="Iconic Cities">Iconic Cities</option>
+              <option value="Mountains">Mountains</option>
+              <option value="Castles">Castles</option>
+              <option value="Amazing Pools">Amazing Pools</option>
+              <option value="Camping">Camping</option>
+              <option value="Farms">Farms</option>
+              <option value="Arctic">Arctic</option>
+              <option value="Domes">Domes</option>
+              <option value="Boats">Boats</option>
+            </select>
+          </div>
         </div>
         
-        <div class="mb-3">
-            <label for="location" class="form-label">Location</label>
-            <input type="text" 
+        <div class="wl-form-group">
+          <label for="location" class="wl-label">Location</label>
+          <input type="text" 
             placeholder="Jaipur, Rajasthan" 
             name="listing[location]" 
+            id="location"
             class="form-control"
             required
-            >
-            <div class="invalid-feedback">Location Should be Valid</div>
+          >
+          <div class="invalid-feedback">Location should be valid</div>
         </div>
         
-        <button class="btn btn-dark add-btn mt-3">Add</button>
-        <br><br>
-    </form>
+        <button class="btn-wl-primary" style="margin-top: 0.5rem;">
+          <i class="fa-solid fa-plus" style="margin-right: 0.3rem;"></i>Add Listing
+        </button>
+      </form>
+    </div>
+  </div>
 </div>
-</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const btnGenerate = document.getElementById("btnGenerateAI");
+    const aiKeywords = document.getElementById("aiKeywords");
+    const titleInput = document.getElementById("title");
+    const categorySelect = document.getElementById("category");
+    const descriptionTextarea = document.getElementById("description");
+    const spinner = document.getElementById("aiSpinner");
+
+    if (btnGenerate && descriptionTextarea) {
+      btnGenerate.addEventListener("click", async () => {
+        const title = titleInput.value.trim();
+        const category = categorySelect.value;
+        const keywords = aiKeywords.value.trim();
+
+        if (!title) {
+          showToast("Please enter a title first, so the AI knows what your stay is named!", "error");
+          titleInput.focus();
+          return;
+        }
+
+        // Show loading state
+        btnGenerate.disabled = true;
+        spinner.style.display = "inline-block";
+        const originalText = btnGenerate.lastChild.textContent;
+        btnGenerate.lastChild.textContent = " Generating...";
+
+        try {
+          const response = await fetch("/api/ai-description", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ title, category, keywords })
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            descriptionTextarea.value = data.description;
+            showToast("AI description generated and populated!", "success");
+          } else {
+            showToast(data.error || "Failed to generate description", "error");
+          }
+        } catch (err) {
+          console.error("AI Generation error:", err);
+          showToast("An error occurred during description generation", "error");
+        } finally {
+          // Hide loading state
+          btnGenerate.disabled = false;
+          spinner.style.display = "none";
+          btnGenerate.lastChild.textContent = originalText;
+        }
+      });
+    }
+  });
+</script>

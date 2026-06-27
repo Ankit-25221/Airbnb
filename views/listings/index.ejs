@@ -1,142 +1,189 @@
 <% layout("/layouts/boilerplate") %>
 
-    <!--<h3>All Listings</h3>-->
-   <!-- <form action="/listings/new" method="GET">
-        <button>Create new Listing</button>
-    </form>-->
-    <style>
-      #filters {
-        display : flex;
-        flex-wrap: wrap;
-        align-items: center;
-      }
+<!-- Category Filters -->
+<div id="filters">
+  <a href="/listings" class="filter <%= activeCategory === '' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-border-all"></i></div>
+    <p>All</p>
+  </a>
+  <a href="/listings?category=Trending" class="filter <%= activeCategory === 'Trending' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-fire"></i></div>
+    <p>Trending</p>
+  </a>
+  <a href="/listings?category=Rooms" class="filter <%= activeCategory === 'Rooms' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-bed"></i></div>
+    <p>Rooms</p>
+  </a>
+  <a href="/listings?category=Iconic Cities" class="filter <%= activeCategory === 'Iconic Cities' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-mountain-city"></i></div>
+    <p>Iconic Cities</p>
+  </a>
+  <a href="/listings?category=Mountains" class="filter <%= activeCategory === 'Mountains' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-mountain"></i></div>
+    <p>Mountains</p>
+  </a>
+  <a href="/listings?category=Castles" class="filter <%= activeCategory === 'Castles' ? 'active' : '' %>">
+    <div><i class="fa-brands fa-fort-awesome"></i></div>
+    <p>Castles</p>
+  </a>
+  <a href="/listings?category=Amazing Pools" class="filter <%= activeCategory === 'Amazing Pools' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-person-swimming"></i></div>
+    <p>Amazing Pools</p>
+  </a>
+  <a href="/listings?category=Camping" class="filter <%= activeCategory === 'Camping' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-campground"></i></div>
+    <p>Camping</p>
+  </a>
+  <a href="/listings?category=Farms" class="filter <%= activeCategory === 'Farms' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-cow"></i></div>
+    <p>Farms</p>
+  </a>
+  <a href="/listings?category=Arctic" class="filter <%= activeCategory === 'Arctic' ? 'active' : '' %>">
+    <div><i class="fa-regular fa-snowflake"></i></div>
+    <p>Arctic</p>
+  </a>
+  <a href="/listings?category=Domes" class="filter <%= activeCategory === 'Domes' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-igloo"></i></div>
+    <p>Domes</p>
+  </a>
+  <a href="/listings?category=Boats" class="filter <%= activeCategory === 'Boats' ? 'active' : '' %>">
+    <div><i class="fa-solid fa-ship"></i></div>
+    <p>Boats</p>
+  </a>
 
-      .filter {
-        text-align: center;
-        margin-right: 2rem;
-        margin-top: 2rem;
-        opacity: 0.7;
-      }
-
-      .filter:hover {
-        opacity: 1;
-        cursor: pointer;
-      }
-
-      .filter p {
-        font-size: 0.8rem;
-      }
-
-      .tax-info {
-        display: none;
-      }
-
-      .tax-toogle {
-        border: 1px solid black;
-        border-radius: 1rem;
-        height: 3.25rem;
-        padding: 1rem;
-        margin-left: 5rem;
-        display: flex;
-        align-items: center;
-      }
-    </style>
-
-    <div id="filters">
-      <div class="filter">
-        <div><i class="fa-solid fa-fire"></i></div>
-        <p>Trending</p>
-      </div>
-      <div class="filter">
-        <div><i class="fa-solid fa-bed"></i></div>
-        <p>Rooms</p>
-      </div>
-      <div class="filter">
-        <div><i class="fa-solid fa-mountain-city"></i></div>
-        <p>Iconic Cities</p>
-      </div>
-      <div class="filter">
-        <div><i class="fa-solid fa-mountain"></i></div>
-        <p>Mountains</p>
-      </div>
-      <div class="filter">
-        <div><i class="fa-brands fa-fort-awesome"></i></div>
-        <p>Castles</p>
-      </div>      
-      <div class="filter">
-        <div><i class="fa-solid fa-person-swimming"></i></div>
-        <p>Amazing Pools</p>
-      </div>
-      <div class="filter">
-        <div><i class="fa-solid fa-campground"></i></div>
-        <p>Camping</p>
-      </div>
-      <div class="filter">
-        <div><i class="fa-solid fa-cow"></i></div>
-        <p>Farms</p>
-      </div>      
-      <div class="filter">
-        <div><i class="fa-regular fa-snowflake"></i></div>
-        <p>Arctic</p>
-      </div>
-        <div class="filter">
-          <div><i class="fa-solid fa-igloo"></i></div>
-          <p>Domes</p>
-        </div>      
-        <div class="filter">
-          <div><i class="fa-solid fa-ship"></i></div>
-          <p>Boats</p>
-      </div>
-
-      <div class="tax-toggle">
-        <div class="form-check-reverse form-switch">
-        <input 
-          class="form-check-input"
-          type="checkbox"
-          role="switch"
-          id="flexSwitchCheckDefault"
-          >
-        <label class="form-check-label" for="flexSwitchCheckDefault"
-        >Display total after taxes</label
-        >
-      </div>
-      </div>
+  <!-- Tax Toggle -->
+  <div class="tax-toggle">
+    <div class="form-check-reverse form-switch mb-0">
+      <input 
+        class="form-check-input"
+        type="checkbox"
+        role="switch"
+        id="flexSwitchCheckDefault"
+      >
+      <label class="form-check-label" for="flexSwitchCheckDefault">Taxes</label>
     </div>
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
-    <% for (let listing of allListings) { %>
-      <a href="/listings/<%= listing._id %>" class="listing-link">
-    <div class="card col listing-card"> <!-- we also use listing.image.url-->
-        <img src="<%= listing.image.url %>"   
-        class="card-img-top" 
-        alt="listing_image " 
-        style="height: 20rem">
+  </div>
+</div>
 
-        <div class="card-img-overlay"></div>
-        <div class="card-body">
-          <p class="card-text">
-            <b><%= listing.title %></b><br>
-           &#8377; <%= listing.price.toLocaleString("en-IN") %> / night
-           <i class="tax-info"> &nbsp; &nbsp;+18% GST</i>
-        </p>
+<!-- Price Range Filter -->
+<div class="wl-price-filter">
+  <label for="priceRange"><i class="fa-solid fa-sliders" style="margin-right: 0.3rem;"></i>Max Price</label>
+  <input 
+    type="range" 
+    id="priceRange" 
+    class="wl-price-slider" 
+    min="0" 
+    max="10000" 
+    value="10000" 
+    step="100"
+  >
+  <span class="wl-price-value" id="priceValue">&#8377; 10,000+</span>
+</div>
+
+<!-- Search results banner -->
+<% if (searchQuery) { %>
+<div class="wl-search-banner">
+  <i class="fa-solid fa-magnifying-glass" style="margin-right: 0.4rem;"></i>
+  Showing results for <strong>"<%= searchQuery %>"</strong> — 
+  <a href="/listings">Clear search</a>
+</div>
+<% } %>
+
+<% if (allListings.length === 0) { %>
+<div class="wl-no-results">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <h4>No listings found</h4>
+  <p>Try a different search term or <a href="/listings">view all listings</a>.</p>
+</div>
+<% } else { %>
+<div class="wl-listings-grid" id="listingsGrid">
+  <% for (let listing of allListings) { %>
+    <a href="/listings/<%= listing._id %>" class="wl-card wl-fade-in" data-price="<%= listing.price %>">
+      <div class="wl-card-img-wrap">
+        <img 
+          src="<%= listing.image.url %>"   
+          class="wl-card-img" 
+          alt="<%= listing.title %>"
+          loading="lazy"
+        >
+        <% if(listing.category) { %>
+          <span class="wl-card-badge"><%= listing.category %></span>
+        <% } %>
+        <!-- Wishlist heart button overlay -->
+        <button 
+          class="wl-heart-btn <%= (currUser && userWishlist.some(id => id.toString() === listing._id.toString())) ? 'wishlisted' : '' %>"
+          data-listing-id="<%= listing._id %>"
+          onclick="event.preventDefault(); toggleWishlist(this);"
+          aria-label="Save to wishlist"
+        >
+          <i class="fa-solid fa-heart"></i>
+        </button>
+      </div>
+      <div class="wl-card-body">
+        <div class="wl-card-title"><%= listing.title %></div>
+        <div class="wl-card-location">
+          <i class="fa-solid fa-location-dot"></i>
+          <%= listing.location %>, <%= listing.country %>
+        </div>
+        <div class="wl-card-price">
+          <strong>&#8377; <%= listing.price.toLocaleString("en-IN") %></strong>
+          <span>/ night</span>
+          <i class="tax-info">&nbsp;+18% GST</i>
         </div>
       </div>
     </a>
-      <% } %>
-    </div>
+  <% } %>
+</div>
+<% } %>
 
-    <script>
-      let taxSwitch = document.getElementById("flexSwitchCheckDefault");
-      taxSwitch.addEventListener("click", () => {
-      let taxInfo = document.getElementsByClassName("tax-info");
-      for(info of taxInfo) {
-        if(info.style.display != "inline") {
-          info.style.display = "inline";
-        } else {
-          info.style.display = "none";
-        }
+<script>
+  // Tax toggle switch — null guard prevents crash if element is absent
+  const taxSwitch = document.getElementById("flexSwitchCheckDefault");
+  if (taxSwitch) {
+    taxSwitch.addEventListener("click", () => {
+      const taxInfo = document.getElementsByClassName("tax-info");
+      for (let info of taxInfo) {
+        info.style.display = (info.style.display !== "inline") ? "inline" : "none";
       }
-      });
-    </script>
+    });
+  }
 
-    
-     
+  // Price range filter (client-side)
+  const priceRange = document.getElementById('priceRange');
+  const priceValue = document.getElementById('priceValue');
+  const listingsGrid = document.getElementById('listingsGrid');
+
+  if (priceRange && listingsGrid) {
+    priceRange.addEventListener('input', () => {
+      const maxPrice = parseInt(priceRange.value);
+      if (priceValue) {
+        priceValue.textContent = maxPrice >= 10000 
+          ? '₹ 10,000+' 
+          : `₹ ${maxPrice.toLocaleString('en-IN')}`;
+      }
+      
+      const cards = listingsGrid.querySelectorAll('.wl-card');
+      cards.forEach(card => {
+        const price = parseInt(card.dataset.price || '0');
+        card.style.display = (maxPrice >= 10000 || price <= maxPrice) ? '' : 'none';
+      });
+    });
+  }
+
+  // Fade-in on scroll (IntersectionObserver)
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.wl-fade-in').forEach(el => observer.observe(el));
+  } else {
+    // Fallback for browsers without IntersectionObserver support
+    document.querySelectorAll('.wl-fade-in').forEach(el => el.classList.add('visible'));
+  }
+</script>

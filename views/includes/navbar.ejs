@@ -1,66 +1,75 @@
-<style>
-
-.search-btn {
-background-color: #fe4244;
-color: #fff;
-border-radius: 25px;
-padding: 0 1rem 0 1rem;
-}
-
-.search-.btn-search {
-  background-color: #fe4244;
-  color: #fff;
-}
-
-.search-btn i {
-  display: inline;
-  margin-right: 0.5rem;
-}
-
-.search-inp {
-  border-radius: 25px;
-  padding: 0.5rem 3rem 0.5rem 3rem;
-  font-size: 1rem;
-}
-</style>
-
-<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+<nav class="navbar navbar-expand-md wl-navbar">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a>
+      <!-- Brand -->
+      <a class="navbar-brand wl-brand" href="/listings">
+        <i class="fa-regular fa-compass"></i> WanderLust
+      </a>
+
+      <!-- Mobile toggle -->
       <button 
-      class="navbar-toggler" 
-      type="button" 
-      data-bs-toggle="collapse" 
-      data-bs-target="#navbarNavAltMarkup" 
+        class="navbar-toggler" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#navbarNavAltMarkup"
       >
         <span class="navbar-toggler-icon"></span>
       </button>
+
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <!-- Left nav -->
         <div class="navbar-nav">
-          <a class="nav-link" href="/listings">Explore</a>
-          </div>
-          <div class="navbar-nav ms-auto">
-            <form class="d-flex" role="search">
-              <input 
-                class="form-control me-2 search-inp" 
-                type="search" 
-                placeholder="Search destinations" 
-                >
-              <button class="btn search-btn" type="submit">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                Search
-              </button>
-            </form>
+          <a class="nav-link wl-nav-link" href="/listings">Explore</a>
         </div>
-          <div class="navbar-nav ms-auto">
-            <a class="nav-link" href="/listings/new">Airbnb your home </a>
-            <% if(!currUser) { %> 
-            <a class="nav-link" href="/signup"><b>Signup</b></a>
-            <a class="nav-link" href="/login"><b>Log in</b></a>
-            <% } %> <% if(currUser) { %> 
-            <a class="nav-link" href="/logout"><b>Log out</b></a>
+
+        <!-- Center search -->
+        <div class="navbar-nav mx-auto">
+          <form class="wl-search-form" role="search" action="/listings" method="GET">
+            <input 
+              class="wl-search-input" 
+              type="search" 
+              name="search"
+              placeholder="Search destinations"
+              value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+            >
+            <button class="wl-search-btn" type="submit">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- Right nav -->
+        <div class="navbar-nav wl-user-nav">
+          <a class="nav-link wl-nav-link" href="/listings/new">
+            <i class="fa-solid fa-plus" style="margin-right: 0.3rem;"></i>List your home
+          </a>
+
+          <% if(currUser) { %>
+            <a class="nav-link wl-nav-icon" href="/wishlist" title="Wishlist">
+              <i class="fa-regular fa-heart"></i>
+            </a>
+            <a class="nav-link wl-nav-icon" href="/bookings" title="My Bookings">
+              <i class="fa-regular fa-calendar-check"></i>
+            </a>
+            <a class="nav-link wl-nav-link" href="/logout">
+              <i class="fa-solid fa-arrow-right-from-bracket" style="margin-right: 0.3rem;"></i>Log out
+            </a>
+          <% } else { %>
+            <a class="wl-nav-auth-btn wl-btn-login" href="/login">Log in</a>
+            <a class="wl-nav-auth-btn wl-btn-signup" href="/signup">Sign up</a>
           <% } %>
-          </div>
+        </div>
       </div>
     </div>
-  </nav>
+</nav>
+
+<script>
+  // Add shadow on scroll
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('.wl-navbar');
+    if (window.scrollY > 10) {
+      nav.classList.add('scrolled');
+    } else {
+      nav.classList.remove('scrolled');
+    }
+  });
+</script>

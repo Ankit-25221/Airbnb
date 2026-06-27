@@ -1,0 +1,246 @@
+/* ==========================================
+   WanderLust — Forms
+   Modern inputs, focus glow, validation
+   ========================================== */
+
+/* Form container card */
+.wl-form-card {
+  background: var(--wl-white);
+  border-radius: var(--wl-radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--wl-shadow);
+  border: 1px solid var(--wl-border-light);
+}
+
+.wl-form-title {
+  font-size: var(--wl-font-size-2xl);
+  font-weight: 700;
+  color: var(--wl-black);
+  margin-bottom: 0.5rem;
+}
+
+.wl-form-subtitle {
+  font-size: var(--wl-font-size-sm);
+  color: var(--wl-gray);
+  margin-bottom: 2rem;
+}
+
+/* Form inputs */
+.wl-input {
+  border: 1.5px solid var(--wl-border);
+  border-radius: var(--wl-radius);
+  padding: 0.75rem 1rem;
+  font-size: var(--wl-font-size-base);
+  font-family: var(--wl-font);
+  color: var(--wl-black);
+  background: var(--wl-white);
+  transition: all var(--wl-transition);
+  width: 100%;
+}
+
+.wl-input:focus {
+  border-color: var(--wl-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--wl-primary-glow);
+}
+
+.wl-input::placeholder {
+  color: var(--wl-gray-light);
+}
+
+/* Labels */
+.wl-label {
+  font-size: var(--wl-font-size-sm);
+  font-weight: 600;
+  color: var(--wl-dark);
+  margin-bottom: 0.45rem;
+  display: block;
+}
+
+/* Select */
+.wl-select {
+  border: 1.5px solid var(--wl-border);
+  border-radius: var(--wl-radius);
+  padding: 0.75rem 1rem;
+  font-size: var(--wl-font-size-base);
+  font-family: var(--wl-font);
+  color: var(--wl-black);
+  background: var(--wl-white);
+  transition: all var(--wl-transition);
+  width: 100%;
+  cursor: pointer;
+}
+
+.wl-select:focus {
+  border-color: var(--wl-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--wl-primary-glow);
+}
+
+/* Textarea */
+.wl-textarea {
+  border: 1.5px solid var(--wl-border);
+  border-radius: var(--wl-radius);
+  padding: 0.75rem 1rem;
+  font-size: var(--wl-font-size-base);
+  font-family: var(--wl-font);
+  color: var(--wl-black);
+  background: var(--wl-white);
+  transition: all var(--wl-transition);
+  width: 100%;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.wl-textarea:focus {
+  border-color: var(--wl-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--wl-primary-glow);
+}
+
+/* File input */
+.wl-file-input {
+  border: 1.5px dashed var(--wl-border);
+  border-radius: var(--wl-radius);
+  padding: 0.75rem 1rem;
+  font-size: var(--wl-font-size-sm);
+  font-family: var(--wl-font);
+  color: var(--wl-gray);
+  background: var(--wl-bg);
+  transition: all var(--wl-transition);
+  width: 100%;
+  cursor: pointer;
+}
+
+.wl-file-input:hover {
+  border-color: var(--wl-primary);
+  background: var(--wl-white);
+}
+
+.wl-file-input:focus {
+  border-color: var(--wl-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--wl-primary-glow);
+}
+
+/* Validation */
+.wl-input.is-invalid,
+.wl-textarea.is-invalid,
+.wl-select.is-invalid {
+  border-color: var(--wl-error);
+}
+
+.wl-input.is-invalid:focus,
+.wl-textarea.is-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(193, 53, 21, 0.15);
+}
+
+/* Bootstrap validation overrides */
+.needs-validation .form-control:focus,
+.needs-validation .form-select:focus {
+  border-color: var(--wl-primary);
+  box-shadow: 0 0 0 3px var(--wl-primary-glow);
+}
+
+.was-validated .form-control:valid,
+.was-validated .form-select:valid {
+  border-color: var(--wl-success);
+  box-shadow: none;
+}
+
+.was-validated .form-control:valid:focus {
+  box-shadow: 0 0 0 3px rgba(0, 166, 153, 0.15);
+}
+
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid {
+  border-color: var(--wl-error);
+  box-shadow: none;
+}
+
+.was-validated .form-control:invalid:focus {
+  box-shadow: 0 0 0 3px rgba(193, 53, 21, 0.15);
+}
+
+/* Form group spacing */
+.wl-form-group {
+  margin-bottom: 1.25rem;
+}
+
+/* Form row (for multi-column fields) */
+.wl-form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+/* Image preview on edit */
+.wl-img-preview {
+  border-radius: var(--wl-radius);
+  max-width: 200px;
+  margin-top: 0.5rem;
+  border: 1px solid var(--wl-border-light);
+}
+
+/* Form control overrides for Bootstrap */
+.form-control,
+.form-select {
+  border: 1.5px solid var(--wl-border);
+  border-radius: var(--wl-radius);
+  padding: 0.75rem 1rem;
+  font-family: var(--wl-font);
+  transition: all var(--wl-transition);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--wl-primary);
+  box-shadow: 0 0 0 3px var(--wl-primary-glow);
+}
+
+.form-label {
+  font-size: var(--wl-font-size-sm);
+  font-weight: 600;
+  color: var(--wl-dark);
+}
+
+/* Fix: Bootstrap btn + wl-primary class mixing — override btn defaults */
+.btn.btn-wl-primary {
+  background: var(--wl-gradient-primary);
+  color: var(--wl-white);
+  border: none;
+  font-family: var(--wl-font);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 8px rgba(255, 56, 92, 0.25);
+}
+
+.btn.btn-wl-primary:hover,
+.btn.btn-wl-primary:focus {
+  background: var(--wl-gradient-primary);
+  color: var(--wl-white);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(255, 56, 92, 0.4);
+  border-color: transparent;
+}
+
+/* Accessibility: consistent focus-visible outline */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--wl-primary);
+  outline-offset: 2px;
+}
+
+/* Mobile form card padding */
+@media (max-width: 575px) {
+  .wl-form-card {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .wl-form-row {
+    grid-template-columns: 1fr;
+  }
+}

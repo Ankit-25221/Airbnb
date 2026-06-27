@@ -1,168 +1,378 @@
 <% layout("/layouts/boilerplate") -%>
-<!--<script>
-    const maoToken = "<%= process.env.MAP_TOKEN %>";
-    const listing = <%- JSON.stringify(listing) %>;
-</script>-->
-    <div class="row mt-3">
-        <div class="col-8 offset-3 ">
-            <h3><%= listing.title %> </h3>
+
+<% 
+  const ownerId = (listing.owner && listing.owner._id) ? listing.owner._id.toString() : (listing.owner ? listing.owner.toString() : null);
+  const isOwner = currUser && ownerId && (ownerId === currUser._id.toString());
+%>
+
+<div class="wl-show-container">
+  <!-- Header -->
+  <div class="wl-show-header d-flex justify-content-between align-items-start flex-wrap gap-3">
+    <div>
+      <h1 class="wl-show-title"><%= listing.title %></h1>
+      <div class="wl-show-meta">
+        <span class="wl-show-meta-item">
+          <i class="fa-solid fa-location-dot"></i>
+          <%= listing.location %>, <%= listing.country %>
+        </span>
+        <% if(listing.category) { %>
+        <span class="wl-show-meta-item">
+          <i class="fa-solid fa-tag"></i>
+          <%= listing.category %>
+        </span>
+        <% } %>
+      </div>
     </div>
-        <div class="card col-6 offset-3 show-card listing-card">
-        <img 
-            src="<%= listing.image.url %>" 
-            alt="listing_image" 
-            class="card-img-top show-img">
-        
-        <div class="card-body">
-            <p class="card-text"><i>Owned by <%= listing.owner.username %></i> </p>
-                
-            <p class="card-text"> <%= listing.description %></p>
-            <p class="card-text"> &#8377; <%= listing.price.toLocaleString("en-IN") %></p>
-            <p class="card-text"> <%= listing.location %> </p>
-            <p class="card-text"> <%= listing.country %> </p>
+    
+    <!-- Wishlist toggle button on show page -->
+    <button 
+      class="btn btn-wl-outline d-flex align-items-center gap-2 px-3 py-2 <%= (currUser && userWishlist.some(id => id.toString() === listing._id.toString())) ? 'wishlisted-btn' : '' %>"
+      data-listing-id="<%= listing._id %>"
+      onclick="toggleWishlistDetail(this);"
+      style="border-radius: var(--wl-radius-full); font-weight: 600; font-size: 0.9rem;"
+    >
+      <i class="<%= (currUser && userWishlist && userWishlist.some(id => id.toString() === listing._id.toString())) ? 'fa-solid' : 'fa-regular' %> fa-heart heart-icon"></i>
+      <span class="btn-text"><%= (currUser && userWishlist && userWishlist.some(id => id.toString() === listing._id.toString())) ? 'Saved' : 'Save' %></span>
+    </button>
+  </div>
+
+  <!-- Hero Image -->
+  <img 
+    src="<%= listing.image.url %>" 
+    alt="<%= listing.title %>" 
+    class="wl-show-image"
+    loading="lazy"
+  >
+
+  <!-- Two-column grid -->
+  <div class="wl-show-grid">
+    <!-- Left column: Details -->
+    <div class="wl-show-details">
+      
+      <!-- Owner -->
+      <div class="wl-show-owner">
+        <div class="wl-owner-avatar">
+          <%= (listing.owner && listing.owner.username) ? listing.owner.username.charAt(0).toUpperCase() : '?' %>
         </div>
-    </div>
+        <div>
+          <div class="wl-owner-name">Hosted by <%= (listing.owner && listing.owner.username) ? listing.owner.username : 'Unknown Host' %></div>
+          <div class="wl-owner-label">Property owner</div>
+        </div>
+      </div>
 
-    <br>
-    
-    <% if(currUser && listing.owner._id.equals(currUser._id)) {%>
-    <div class="btns">
-        <a 
-            href="/listings/<%= listing._id %>/edit "
-            class="btn btn-dark col-1 offset-3 edit-btn"
-            >Edit</a
-        >
+      <!-- Description -->
+      <div class="wl-show-description">
+        <%= listing.description %>
+      </div>
 
-        <form method="post" action="/listings/<%= listing._id %>?_method=DELETE">
-            <button class="btn btn-dark offset-5">Delete </button>
-        </form> 
-    </div>
-    <% } %>
+      <!-- Location info -->
+      <div style="padding: 1rem 0;">
+        <span class="wl-location-chip">
+          <i class="fa-solid fa-location-dot"></i> <%= listing.location %>
+        </span>
+        <span class="wl-location-chip">
+          <i class="fa-solid fa-earth-americas"></i> <%= listing.country %>
+        </span>
+      </div>
 
-    
-    <div class="col-8 offset-3 mb-3">
-        <% if(currUser) {%>
-        <hr>
-        <h4>Leave a Review</h4>
-        <form action="/listings/<%= listing.id %>/reviews"
-             method="POST"
-             novalidate
-             class="needs-validation"
-             >
-
-            <!--<div class="mb-3 mt-3">
-                <label for="rating" class="form-label">Rating</label>
-                <input 
-                type="range" 
-                min="1" 
-                max="5" 
-                id="rating" 
-                name="review[rating]" 
-                class="form-range"
-                />
-            </div> -->
-            <div class="mb-3 mt-3">
-            <label for="rating" class="form-label">Rating</label>    
-            <fieldset class="starability-slot">
-                <input 
-                type="radio" 
-                id="no-rate" 
-                class="input-no-rate" 
-                name="review[rating]" 
-                value="1" 
-                checked 
-                aria-label="No rating." 
-                />
-                <input 
-                type="radio" 
-                id="first-rate1" 
-                name="review[rating]" 
-                value="1" />
-                <label for="first-rate1" title="Terrible">1 star</label>
-                <input 
-                type="radio" 
-                id="first-rate2" 
-                name="review[rating]" 
-                value="2" />
-                <label for="first-rate2" title="Not good">2 stars</label>
-                <input 
-                type="radio" 
-                id="first-rate3" 
-                name="review[rating]" 
-                value="3" />
-                <label for="first-rate3" title="Average">3 stars</label>
-                <input 
-                type="radio" 
-                id="first-rate4" 
-                name="review[rating]" 
-                value="4" />
-                <label for="first-rate4" title="Very good">4 stars</label>
-                <input 
-                type="radio" 
-                id="first-rate5" 
-                name="review[rating]" 
-                value="5" />
-                <label for="first-rate5" title="Amazing">5 stars</label>
-            </fieldset>
-           </div>
-  
-  
-            <div class="mb-3 mt-3">
-                <label for="comment" class="form-label">Comments</label>
-                <textarea
-                 name="review[comment]" 
-                 id="comment" 
-                 cols="30" 
-                 rows="5" 
-                 class="form-control"
-                 required
-                 ></textarea>
-                 <div class="invalid-feedback">
-                    Please add some comments for review
-                </div>
-            </div>
-            <button class="btn btn-outline-dark">Submit</button>
-            <hr>
-            <% } %>
+      <!-- Action buttons (owner only) -->
+      <% if(isOwner) { %>
+      <div class="wl-show-actions">
+        <a href="/listings/<%= listing._id %>/edit" class="btn-wl-primary">
+          <i class="fa-solid fa-pen-to-square" style="margin-right: 0.3rem;"></i>Edit
+        </a>
+        <form method="post" action="/listings/<%= listing._id %>?_method=DELETE" style="margin: 0;">
+          <button class="btn-wl-outline" type="submit">
+            <i class="fa-solid fa-trash" style="margin-right: 0.3rem;"></i>Delete
+          </button>
         </form>
-    
-       
+      </div>
+      <% } %>
 
-        <% if(listing.reviews.length > 0) { %>
-        <div class="row">
-        <p><b>All Reviews</b></p>
-        <% for(review of listing.reviews) { %>
-         <div class="card col-5 ms-3 mb-3">
-            <div class="card-body">
-                <h5 class="card-title">@<%= review.author.username %></h5>
-                <p 
-                    class="starability-result card-text" 
-                    data-rating="<%= review.rating %>"
-                ></p>
-                <p class="card-text"><%= review.comment %></p>
-                
-            <form             
-            class="mb-3" 
-            method="POST"
-            action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" 
-            >
-                <button class="btn btn-sm btn-dark">Delete</button>
-            </form>
-            </div>
-         </div>
-            <% } %>
+      <!-- Map Section -->
+      <div class="wl-map-section">
+        <h3 class="wl-map-title">📍 Where you'll be</h3>
+        <div id="map" 
+             data-token="<%= mapToken %>" 
+             data-coords='<%- JSON.stringify(listing.geometry ? listing.geometry.coordinates : null) %>'
+             data-title="<%= (listing.title || '').replace(/\"/g, '&quot;') %>">
+        </div>
+        <p class="wl-map-note">Exact location provided after booking.</p>
+      </div>
+
+      <!-- Reviews Section -->
+      <div class="wl-reviews-section">
+        <!-- AI Review Summary -->
+        <% if(listing.reviewSummary) { %>
+        <div class="wl-ai-summary-card mb-4 p-4" style="background: linear-gradient(135deg, rgba(255, 56, 92, 0.05) 0%, rgba(255, 56, 92, 0.01) 100%); border: 1px solid rgba(255, 56, 92, 0.15); border-radius: var(--wl-radius-lg); position: relative; overflow: hidden;">
+          <div style="position: absolute; top: -10px; right: -10px; opacity: 0.03; font-size: 8rem; color: var(--wl-primary); pointer-events: none;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <h5 class="d-flex align-items-center gap-2 mb-2" style="font-weight: 700; color: var(--wl-primary); font-size: 1.1rem; margin: 0;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> AI Review Summary
+          </h5>
+          <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6; color: var(--wl-dark); font-style: italic;">
+            "<%= listing.reviewSummary %>"
+          </p>
         </div>
         <% } %>
+
+        <% if(currUser) { %>
+        <div class="wl-review-form">
+          <h4>Leave a Review</h4>
+          <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
+            <div class="mb-3">
+              <label for="rating" class="form-label" style="font-weight: 600;">Rating</label>    
+              <fieldset class="starability-slot">
+                <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                <label for="first-rate1" title="Terrible">1 star</label>
+                <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                <label for="first-rate2" title="Not good">2 stars</label>
+                <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                <label for="first-rate3" title="Average">3 stars</label>
+                <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                <label for="first-rate4" title="Very good">4 stars</label>
+                <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                <label for="first-rate5" title="Amazing">5 stars</label>
+              </fieldset>
+            </div>
+
+            <div class="mb-3">
+              <label for="comment" class="form-label" style="font-weight: 600;">Comment</label>
+              <textarea 
+                name="review[comment]" 
+                id="comment" 
+                cols="30" 
+                rows="4" 
+                class="form-control"
+                placeholder="Share your experience..."
+                required
+              ></textarea>
+              <div class="invalid-feedback">Please add some comments for review</div>
+            </div>
+            <button class="btn-wl-primary" type="submit">Submit Review</button>
+          </form>
+        </div>
+        <% } %>
+
+        <% if(listing.reviews.length > 0) { %>
+        <div style="margin-top: 2rem;">
+          <h4 class="wl-reviews-title">
+            <i class="fa-solid fa-star" style="color: var(--wl-warning); margin-right: 0.3rem;"></i>
+            All Reviews (<%= listing.reviews.length %>)
+          </h4>
+
+          <div class="row">
+            <% for(let review of listing.reviews) { 
+              const reviewAuthorId = (review.author && review.author._id) ? review.author._id.toString() : (review.author ? review.author.toString() : null);
+              const isReviewAuthor = currUser && reviewAuthorId && (reviewAuthorId === currUser._id.toString());
+            %>
+            <div class="col-md-6 mb-3">
+              <div class="wl-review-card">
+                <div class="wl-review-header">
+                  <div class="wl-review-avatar">
+                    <%= (review.author && review.author.username) ? review.author.username.charAt(0).toUpperCase() : '?' %>
+                  </div>
+                  <div>
+                    <div class="wl-review-author">@<%= (review.author && review.author.username) ? review.author.username : 'Deleted User' %></div>
+                    <% if(review.createdAt) { %>
+                    <div class="wl-review-date"><%= review.createdAt.toDateString() %></div>
+                    <% } %>
+                  </div>
+                </div>
+                <p class="starability-result" data-rating="<%= review.rating %>"></p>
+                <p class="wl-review-comment"><%= review.comment %></p>
+
+                <% if(isReviewAuthor) { %>
+                <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                  <button class="btn-wl-outline" style="font-size: 0.8rem; padding: 0.35rem 0.8rem;">
+                    <i class="fa-solid fa-trash" style="margin-right: 0.25rem;"></i>Delete
+                  </button>
+                </form>
+                <% } %>
+              </div>
+            </div>
+            <% } %>
+          </div>
+        </div>
+        <% } %>
+      </div>
     </div>
 
-    <!-- Use in mapbox
-    <div class="col-8 offset-3 mb-3">
-        <h3>Where you'll be</h3>
-        <div id="map"></div>
-    -->
-    </div>
-</div>
+    <!-- Right column: Booking Card -->
+    <div>
+      <div class="wl-booking-card">
+        <!-- Price + Currency Toggle -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="wl-booking-price" style="margin-bottom:0;">
+            <span id="currencySymbol">&#8377;</span>
+            <span id="basePrice" data-val-inr="<%= listing.price || 0 %>"
+              data-val-usd="<%= Math.round((listing.price || 0) / 84) %>">
+              <%= (listing.price || 0).toLocaleString("en-IN") %>
+            </span>
+            <span>/ night</span>
+          </div>
+          <!-- Currency Toggle -->
+          <div class="wl-currency-toggle" title="Switch currency">
+            <button id="currencyBtn" class="wl-currency-btn" onclick="switchCurrency()">
+              <span id="currencyLabel">&#8377; INR</span>
+              <i class="fa-solid fa-arrows-rotate" style="font-size: 0.75rem; margin-left: 0.3rem;"></i>
+            </button>
+          </div>
+        </div>
 
+        <div class="divider" style="margin: 1rem 0;"></div>
+
+        <% if (!currUser) { %>
+          <div class="text-center py-3">
+            <p style="font-size: 0.9rem; color: var(--wl-gray); margin-bottom: 1rem;">Log in to book this stay</p>
+            <a href="/login" class="btn-wl-primary d-block text-decoration-none py-2">Log In / Sign Up</a>
+          </div>
+        <% } else if (isOwner) { %>
+          <div class="text-center py-3" style="color: var(--wl-gray);">
+            <i class="fa-solid fa-house-user" style="font-size: 2rem; margin-bottom: 0.75rem; display: block; color: var(--wl-primary);"></i>
+            <p style="font-size: 0.9rem; margin: 0;">You host this listing</p>
+            <p style="font-size: 0.8rem; margin: 0.25rem 0 0;">Cannot book your own property.</p>
+          </div>
+        <% } else { %>
+          <form action="/bookings/<%= listing._id %>" method="POST" class="needs-validation" novalidate>
+            <div class="wl-form-group mb-3">
+              <label class="wl-label" for="bookingDates">Dates</label>
+              <input 
+                type="text" 
+                id="bookingDates" 
+                class="form-control" 
+                placeholder="Select dates" 
+                required
+                style="cursor: pointer; background: var(--wl-white);"
+                data-booked-dates='<%- JSON.stringify(typeof bookedDates !== "undefined" ? bookedDates : []) %>'
+              >
+              <input type="hidden" name="booking[startDate]" id="startDate">
+              <input type="hidden" name="booking[endDate]" id="endDate">
+            </div>
+
+            <!-- Price Breakdown (visible only when dates are selected) -->
+            <div id="priceBreakdown" style="display: none; margin-top: 1.5rem;">
+              <div class="d-flex justify-content-between mb-2" style="font-size: 0.9rem; color: var(--wl-dark);">
+                <span id="priceLabel"><span class="bd-symbol">&#8377;</span> <%= (listing.price || 0).toLocaleString("en-IN") %> x 0 nights</span>
+                <span id="nightsSubtotal"><span class="bd-symbol">&#8377;</span> 0</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2" style="font-size: 0.9rem; color: var(--wl-dark);">
+                <span>18% GST (Taxes)</span>
+                <span id="gstAmount"><span class="bd-symbol">&#8377;</span> 0</span>
+              </div>
+              <hr style="border-top: 1px solid var(--wl-border-light); margin: 0.75rem 0;">
+              <div class="d-flex justify-content-between mb-3" style="font-size: 1.05rem; font-weight: 700; color: var(--wl-black);">
+                <span>Total</span>
+                <span id="totalPrice"><span class="bd-symbol">&#8377;</span> 0</span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-wl-primary w-100" style="border-radius: var(--wl-radius); font-size: 1rem; padding: 0.65rem 1rem;">
+              Reserve Stay
+            </button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div><script>
+    // Read price and currency properties from DOM attributes (prevents IDE parser warnings)
+    const basePriceEl = document.getElementById('basePrice');
+    const priceINR = basePriceEl ? parseInt(basePriceEl.getAttribute('data-val-inr') || '0', 10) : 0;
+    const priceUSD = basePriceEl ? parseInt(basePriceEl.getAttribute('data-val-usd') || '0', 10) : 0;
+
+    // Currency toggle
+    let currentCurrency = 'INR';
+    function switchCurrency() {
+      currentCurrency = currentCurrency === 'INR' ? 'USD' : 'INR';
+      const sym = currentCurrency === 'INR' ? '&#8377;' : '$';
+      const price = currentCurrency === 'INR' ? priceINR : priceUSD;
+      const label = currentCurrency === 'INR' ? '&#8377; INR' : '$ USD';
+      const locale = currentCurrency === 'INR' ? 'en-IN' : 'en-US';
+
+      if (basePriceEl) {
+        document.getElementById('currencySymbol').innerHTML = sym;
+        document.getElementById('currencyLabel').innerHTML = label;
+        basePriceEl.setAttribute('data-val-inr', priceINR); // keep synced
+        basePriceEl.textContent = price.toLocaleString(locale);
+      }
+
+      // Update breakdown symbols if visible
+      document.querySelectorAll('.bd-symbol').forEach(el => el.innerHTML = sym);
+      
+      // Re-calc breakdown if dates are selected
+      const startEl = document.getElementById('startDate');
+      const endEl = document.getElementById('endDate');
+      if (startEl && endEl && startEl.value && endEl.value) {
+        const nights = Math.ceil((new Date(endEl.value) - new Date(startEl.value)) / (1000 * 3600 * 24));
+        const subtotal = nights * price;
+        const gst = Math.round(subtotal * 0.18);
+        const total = subtotal + gst;
+        document.getElementById('priceLabel').innerHTML = `<span class="bd-symbol">${sym}</span> ${price.toLocaleString(locale)} x ${nights} night${nights > 1 ? 's' : ''}`;
+        document.getElementById('nightsSubtotal').innerHTML = `<span class="bd-symbol">${sym}</span> ${subtotal.toLocaleString(locale)}`;
+        document.getElementById('gstAmount').innerHTML = `<span class="bd-symbol">${sym}</span> ${gst.toLocaleString(locale)}`;
+        document.getElementById('totalPrice').innerHTML = `<span class="bd-symbol">${sym}</span> ${total.toLocaleString(locale)}`;
+      }
+    }
+    
+    // Flatpickr date range selection
+    document.addEventListener("DOMContentLoaded", () => {
+        const bookingDatesInput = document.getElementById("bookingDates");
+        if (bookingDatesInput) {
+            const bookedDatesRaw = bookingDatesInput.getAttribute("data-booked-dates");
+            const bookedDates = bookedDatesRaw ? JSON.parse(bookedDatesRaw) : [];
+            const disabledRanges = bookedDates.map(range => ({
+                from: new Date(range.from),
+                to: new Date(range.to)
+            }));
+            
+            flatpickr(bookingDatesInput, {
+                mode: "range",
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                disable: disabledRanges,
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length === 2) {
+                        const start = selectedDates[0];
+                        const end = selectedDates[1];
+                        
+                        // Formats date to local YYYY-MM-DD
+                        const formatDate = (date) => {
+                             const year = date.getFullYear();
+                             const month = String(date.getMonth() + 1).padStart(2, '0');
+                             const day = String(date.getDate()).padStart(2, '0');
+                             return `${year}-${month}-${day}`;
+                        };
+                        document.getElementById("startDate").value = formatDate(start);
+                        document.getElementById("endDate").value = formatDate(end);
+                        
+                        // Calculate price breakdown (currency-aware)
+                        const timeDiff = end.getTime() - start.getTime();
+                        const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                        const activePrice = currentCurrency === 'INR' ? priceINR : priceUSD;
+                        const locale = currentCurrency === 'INR' ? 'en-IN' : 'en-US';
+                        const sym = currentCurrency === 'INR' ? '&#8377;' : '$';
+                        
+                        const subtotal = nights * activePrice;
+                        const gst = Math.round(subtotal * 0.18);
+                        const total = subtotal + gst;
+                        
+                        document.getElementById("priceLabel").innerHTML = `<span class="bd-symbol">${sym}</span> ${activePrice.toLocaleString(locale)} x ${nights} night${nights > 1 ? 's' : ''}`;
+                        document.getElementById("nightsSubtotal").innerHTML = `<span class="bd-symbol">${sym}</span> ${subtotal.toLocaleString(locale)}`;
+                        document.getElementById("gstAmount").innerHTML = `<span class="bd-symbol">${sym}</span> ${gst.toLocaleString(locale)}`;
+                        document.getElementById("totalPrice").innerHTML = `<span class="bd-symbol">${sym}</span> ${total.toLocaleString(locale)}`;
+                        
+                        document.getElementById("priceBreakdown").style.display = "block";
+                    } else {
+                        document.getElementById("priceBreakdown").style.display = "none";
+                        document.getElementById("startDate").value = "";
+                        document.getElementById("endDate").value = "";
+                    }
+                }
+            });
+        }
+    });
+</script>
 <script src="/js/map.js"></script>
-
-

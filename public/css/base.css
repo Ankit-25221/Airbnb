@@ -1,0 +1,194 @@
+/* ==========================================
+   WanderLust — Base Design System
+   Variables, palette, typography, utilities
+   ========================================== */
+
+:root {
+  /* Primary palette */
+  --wl-primary: #FF385C;
+  --wl-primary-dark: #E31C5F;
+  --wl-primary-light: #FF5A7E;
+  --wl-primary-glow: rgba(255, 56, 92, 0.25);
+
+  /* Neutrals */
+  --wl-black: #222222;
+  --wl-dark: #484848;
+  --wl-gray: #717171;
+  --wl-gray-light: #B0B0B0;
+  --wl-border: #DDDDDD;
+  --wl-border-light: #EBEBEB;
+  --wl-bg: #F7F7F7;
+  --wl-white: #FFFFFF;
+
+  /* Accent */
+  --wl-success: #00A699;
+  --wl-warning: #FFB400;
+  --wl-error: #C13515;
+  --wl-info: #428BFF;
+
+  /* Gradients */
+  --wl-gradient-primary: linear-gradient(135deg, #FF385C 0%, #E61E4D 50%, #D70466 100%);
+  --wl-gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  --wl-gradient-subtle: linear-gradient(135deg, #ffeef1 0%, #fff5f7 100%);
+
+  /* Shadows */
+  --wl-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --wl-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --wl-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --wl-shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --wl-shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.15);
+
+  /* Radius */
+  --wl-radius-sm: 8px;
+  --wl-radius: 12px;
+  --wl-radius-lg: 16px;
+  --wl-radius-xl: 24px;
+  --wl-radius-full: 50px;
+
+  /* Transitions */
+  --wl-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --wl-transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Typography */
+  --wl-font: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --wl-font-size-xs: 0.75rem;
+  --wl-font-size-sm: 0.875rem;
+  --wl-font-size-base: 1rem;
+  --wl-font-size-lg: 1.125rem;
+  --wl-font-size-xl: 1.25rem;
+  --wl-font-size-2xl: 1.5rem;
+  --wl-font-size-3xl: 2rem;
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--wl-font) !important;
+  color: var(--wl-black);
+  background-color: var(--wl-bg);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  flex: 1;
+  max-width: 1280px;
+}
+
+/* Selection color */
+::selection {
+  background: var(--wl-primary-glow);
+  color: var(--wl-primary-dark);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--wl-gray-light);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--wl-gray);
+}
+
+/* Links */
+a {
+  transition: color var(--wl-transition);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: var(--wl-black);
+}
+
+/* Primary button */
+.btn-wl-primary {
+  background: var(--wl-gradient-primary);
+  color: var(--wl-white);
+  border: none;
+  padding: 0.65rem 1.5rem;
+  border-radius: var(--wl-radius-full);
+  font-weight: 600;
+  font-size: var(--wl-font-size-sm);
+  letter-spacing: 0.02em;
+  transition: all var(--wl-transition);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255, 56, 92, 0.25);
+}
+
+.btn-wl-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(255, 56, 92, 0.4);
+  color: var(--wl-white);
+}
+
+.btn-wl-primary:active {
+  transform: translateY(0);
+}
+
+/* Outline button */
+.btn-wl-outline {
+  background: transparent;
+  color: var(--wl-black);
+  border: 1.5px solid var(--wl-border);
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--wl-radius-full);
+  font-weight: 500;
+  font-size: var(--wl-font-size-sm);
+  transition: all var(--wl-transition);
+  cursor: pointer;
+}
+
+.btn-wl-outline:hover {
+  border-color: var(--wl-black);
+  background: var(--wl-black);
+  color: var(--wl-white);
+}
+
+/* Dark button */
+.btn-wl-dark {
+  background: var(--wl-black);
+  color: var(--wl-white);
+  border: none;
+  padding: 0.65rem 1.5rem;
+  border-radius: var(--wl-radius-full);
+  font-weight: 600;
+  font-size: var(--wl-font-size-sm);
+  transition: all var(--wl-transition);
+  cursor: pointer;
+}
+
+.btn-wl-dark:hover {
+  background: var(--wl-dark);
+  color: var(--wl-white);
+  transform: translateY(-1px);
+  box-shadow: var(--wl-shadow-md);
+}
+
+/* Utility */
+.text-muted-wl {
+  color: var(--wl-gray) !important;
+}
+
+.divider {
+  height: 1px;
+  background: var(--wl-border-light);
+  margin: 1.5rem 0;
+}

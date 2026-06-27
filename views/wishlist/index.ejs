@@ -1,0 +1,74 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="wl-show-container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="wl-form-title mb-1">Your Wishlist</h2>
+      <p class="wl-form-subtitle mb-0">Stays and experiences you've saved</p>
+    </div>
+    <a href="/listings" class="btn btn-wl-outline">
+      <i class="fa-solid fa-arrow-left" style="margin-right: 0.4rem;"></i>Back to Stays
+    </a>
+  </div>
+
+  <% if (wishlist.length === 0) { %>
+    <div class="wl-no-results text-center py-5" style="background: var(--wl-white); border-radius: var(--wl-radius-lg); border: 1px solid var(--wl-border-light);">
+      <i class="fa-regular fa-heart" style="font-size: 3.5rem; color: var(--wl-border); margin-bottom: 1rem; display: block;"></i>
+      <h4 style="font-weight: 600; color: var(--wl-black);">Create your first wishlist</h4>
+      <p style="color: var(--wl-gray); margin-bottom: 1.5rem;">As you search, click the heart icon on stays that catch your eye to save them here.</p>
+      <a href="/listings" class="btn-wl-primary px-4 py-2 text-decoration-none">Explore Stays</a>
+    </div>
+  <% } else { %>
+    <div class="wl-listings-grid" id="listingsGrid">
+      <% for (let listing of wishlist) { %>
+        <a href="/listings/<%= listing._id %>" class="wl-card wl-fade-in" data-price="<%= listing.price %>">
+          <div class="wl-card-img-wrap">
+            <img 
+              src="<%= listing.image.url %>"   
+              class="wl-card-img" 
+              alt="<%= listing.title %>"
+              loading="lazy"
+            >
+            <% if(listing.category) { %>
+              <span class="wl-card-badge"><%= listing.category %></span>
+            <% } %>
+            <!-- Wishlist heart button overlay -->
+            <button 
+              class="wl-heart-btn wishlisted"
+              data-listing-id="<%= listing._id %>"
+              onclick="event.preventDefault(); toggleWishlist(this);"
+              aria-label="Remove from wishlist"
+            >
+              <i class="fa-solid fa-heart"></i>
+            </button>
+          </div>
+          <div class="wl-card-body">
+            <div class="wl-card-title"><%= listing.title %></div>
+            <div class="wl-card-location">
+              <i class="fa-solid fa-location-dot"></i>
+              <%= listing.location %>, <%= listing.country %>
+            </div>
+            <div class="wl-card-price">
+              <strong>&#8377; <%= listing.price.toLocaleString("en-IN") %></strong>
+              <span>/ night</span>
+            </div>
+          </div>
+        </a>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+<script>
+  // Fade-in animation for wishlist cards
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.wl-fade-in').forEach(el => observer.observe(el));
+</script>
