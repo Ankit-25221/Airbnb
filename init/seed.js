@@ -163,32 +163,48 @@ const seedSampleListings = [
     }
 ];
 
+const testUsers = [
+    { username: "arjun", email: "arjun@gmail.com", password: "password123" },
+    { username: "sophia", email: "sophia@gmail.com", password: "password123" },
+    { username: "lucas", email: "lucas@gmail.com", password: "password123" },
+    { username: "emma", email: "emma@gmail.com", password: "password123" }
+];
+
 const seedDB = async () => {
     try {
         console.log("Connecting to Database...");
         await main();
         console.log("Connected successfully!");
 
-        // 1. Get or create a user to own these listings
-        let user = await User.findOne({});
-        if (!user) {
-            console.log("No users found. Creating a demouser...");
-            let fakeUser = new User({ email: "demouser@gmail.com", username: "demouser" });
-            user = await User.register(fakeUser, "password123");
-            console.log("Demouser created successfully!");
-        } else {
-            console.log(`Using existing user: ${user.username} (${user.email})`);
+        // 1. Get or create test users
+        console.log("Setting up test users...");
+        let dbUsers = [];
+        for (let u of testUsers) {
+            let existingUser = await User.findOne({ username: u.username });
+            if (!existingUser) {
+                console.log(`Creating user: ${u.username}...`);
+                let newUser = new User({ email: u.email, username: u.username });
+                let registeredUser = await User.register(newUser, u.password);
+                dbUsers.push(registeredUser);
+            } else {
+                console.log(`User already exists: ${u.username}`);
+                dbUsers.push(existingUser);
+            }
         }
 
-        // 2. Clear old listings
+        // 2. Clear old listings and reviews
         console.log("Clearing old listings...");
         await Listing.deleteMany({});
         await Review.deleteMany({});
         console.log("Old listings cleared.");
 
-        // 3. Geocode and insert each listing
+        // 3. Geocode and insert each listing with different owners and authors
         console.log("Geocoding and inserting listings...");
+        let index = 0;
         for (let item of seedSampleListings) {
+            let ownerUser = dbUsers[index % dbUsers.length];
+            let reviewAuthorUser = dbUsers[(index + 1) % dbUsers.length];
+
             console.log(`Geocoding: ${item.location}...`);
             let geometry = { type: "Point", coordinates: [77.209, 28.6139] }; // Fallback to New Delhi
             try {
@@ -205,24 +221,40 @@ const seedDB = async () => {
 
             const newListing = new Listing({
                 ...item,
-                owner: user._id,
+                owner: ownerUser._id,
                 geometry: geometry
             });
 
-            // 4. Add a sample review
+            // Specific unique reviews for each listing
+            const reviewComments = [
+                "Loved waking up to the ocean sound! Extremely clean and cozy.",
+                "Perfect downtown location! Everything was within walking distance.",
+                "Stunning views of the rolling hills. The wine tasting was amazing!",
+                "Amazing ski chalets. Right next to the slopes, warm and cozy inside.",
+                "Felt like royalty staying here! Beautiful stone walls and great service.",
+                "The pool is incredible, and the garden is extremely peaceful.",
+                "Best glamping experience ever! Very quiet and beautiful lake views.",
+                "Lovely rural stay. Loved seeing the farm animals and fresh breakfast!",
+                "Saw the northern lights from our bed! Absolutely breathtaking.",
+                "Beautiful dome with a clear view of the stars. Very peaceful retreat.",
+                "Fascinating stay on the canal. The houseboat is modern and spacious.",
+                "Incredible Goa beach house. Watched beautiful sunsets every evening."
+            ];
+
             const sampleReview = new Review({
-                comment: `Absolutely amazing experience! The ${item.category} vibe here was beautiful and clean.`,
+                comment: reviewComments[index % reviewComments.length],
                 rating: 5,
-                author: user._id
+                author: reviewAuthorUser._id
             });
             await sampleReview.save();
 
             newListing.reviews.push(sampleReview._id);
             await newListing.save();
-            console.log(`Saved listing: "${item.title}" with a sample review!`);
+            console.log(`Saved listing: "${item.title}" (Owner: ${ownerUser.username}, Reviewer: ${reviewAuthorUser.username})`);
+            index++;
         }
 
-        console.log("Database seeded successfully with geocoded listings and reviews!");
+        console.log("Database seeded successfully with geocoded listings and diverse owners/reviews!");
     } catch (err) {
         console.error("Error during database seeding:", err);
     } finally {
