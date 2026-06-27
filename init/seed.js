@@ -2,14 +2,12 @@
 require('dotenv').config();
 
 const mongoose = require("mongoose");
-const initData = require("./data.js");
 const Listing = require("../models/listing.js");
 const Review = require("../models/review.js");
 const User = require("../models/user.js");
-const Booking = require("../models/booking.js");
-
 const { config, geocoding } = require('@maptiler/client');
-const mapToken = process.env.MAPTILER_API_KEY || "gvBIbPqheh0w6MhQoDnM";
+
+const mapToken = process.env.MAPTILER_API_KEY || process.env.MAP_TOKEN || process.env.MAPBOX_TOKEN;
 config.apiKey = mapToken;
 
 const MONGO_URL = process.argv[2] || process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderlust";
@@ -18,81 +16,105 @@ async function main() {
     await mongoose.connect(MONGO_URL);
 }
 
+const seedSampleListings = [
+    {
+        title: "Cozy Beachfront Cottage",
+        description: "Escape to this charming beachfront cottage for a relaxing getaway. Enjoy stunning ocean views and easy access to the beach.",
+        image: {
+            filename: "listingimage",
+            url: "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?auto=format&fit=crop&w=800&q=60"
+        },
+        price: 1500,
+        location: "Malibu, California",
+        country: "United States",
+        category: "Trending"
+    },
+    {
+        title: "Modern Loft in Downtown",
+        description: "Stay in the heart of the city in this stylish loft apartment. Perfect for urban explorers!",
+        image: {
+            filename: "listingimage",
+            url: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60"
+        },
+        price: 1200,
+        location: "New York City, New York",
+        country: "United States",
+        category: "Iconic Cities"
+    },
+    {
+        title: "Historic Villa in Tuscany",
+        description: "Experience the charm of Tuscany in this beautifully restored villa. Explore the rolling hills and vineyards.",
+        image: {
+            filename: "listingimage",
+            url: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=60"
+        },
+        price: 2500,
+        location: "Florence, Tuscany",
+        country: "Italy",
+        category: "Iconic Cities"
+    }
+];
+
 const seedDB = async () => {
     try {
         console.log("Connecting to Database...");
         await main();
         console.log("Connected successfully!");
 
-        // 1. Clean existing database collections
-        console.log("Clearing existing listings, reviews, bookings, and wishlists...");
-        await Listing.deleteMany({});
-        await Review.deleteMany({});
-        await Booking.deleteMany({});
-        await User.updateMany({}, { $set: { wishlist: [] } });
-
-        // 2. Find or register default user
+        // 1. Get or create a user to own these listings
         let user = await User.findOne({});
         if (!user) {
-            console.log("No users found. Creating a default demo user...");
+            console.log("No users found. Creating a demouser...");
             let fakeUser = new User({ email: "demouser@gmail.com", username: "demouser" });
             user = await User.register(fakeUser, "password123");
-            console.log(`Demo user created: ${user.username} (email: ${user.email}, password: password123)`);
+            console.log("Demouser created successfully!");
         } else {
-            console.log(`Using existing user: ${user.username} (${user._id})`);
+            console.log(`Using existing user: ${user.username} (${user.email})`);
         }
 
-        // 3. Geocode and populate listings
-        // We will seed the first 10 listings from initData.data
-        const listingsToSeed = initData.data.slice(0, 10);
+        // 2. Clear old listings
+        console.log("Clearing old listings...");
+        await Listing.deleteMany({});
+        await Review.deleteMany({});
+        console.log("Old listings cleared.");
 
-        console.log(`Geocoding and preparing ${listingsToSeed.length} listings...`);
-        for (let i = 0; i < listingsToSeed.length; i++) {
-            const item = listingsToSeed[i];
-            console.log(`[${i+1}/${listingsToSeed.length}] Geocoding: ${item.title} in ${item.location}, ${item.country}`);
-            
-            let geometry = { type: "Point", coordinates: [77.209, 28.6139] }; // Fallback
+        // 3. Geocode and insert each listing
+        console.log("Geocoding and inserting listings...");
+        for (let item of seedSampleListings) {
+            console.log(`Geocoding: ${item.location}...`);
+            let geometry = { type: "Point", coordinates: [77.209, 28.6139] }; // Fallback to New Delhi
             try {
-                const response = await geocoding.forward(`${item.location}, ${item.country}`, { limit: 1 });
+                const response = await geocoding.forward(item.location, { limit: 1 });
                 if (response && response.features && response.features.length > 0) {
                     geometry = response.features[0].geometry;
+                    console.log(`Geocoding success for ${item.location}: ${JSON.stringify(geometry.coordinates)}`);
+                } else {
+                    console.log(`Geocoding returned no features for ${item.location}. Using fallback.`);
                 }
             } catch (err) {
                 console.error(`Geocoding failed for ${item.location}:`, err.message);
             }
 
-            const listing = new Listing({
+            const newListing = new Listing({
                 ...item,
                 owner: user._id,
                 geometry: geometry
             });
 
-            // Save listing to get an _id
-            await listing.save();
-
-            // 4. Create and add 2 reviews for this listing
-            const review1 = new Review({
-                comment: "Beautiful place! Had an absolutely amazing stay.",
+            // 4. Add a sample review
+            const sampleReview = new Review({
+                comment: "Absolutely amazing experience! The location was beautiful and clean.",
                 rating: 5,
                 author: user._id
             });
-            await review1.save();
+            await sampleReview.save();
 
-            const review2 = new Review({
-                comment: "Nice location and friendly host. Highly recommended!",
-                rating: 4,
-                author: user._id
-            });
-            await review2.save();
-
-            listing.reviews.push(review1._id, review2._id);
-            await listing.save();
-
-            console.log(`Saved: ${listing.title} with 2 reviews and geometry:`, geometry);
+            newListing.reviews.push(sampleReview._id);
+            await newListing.save();
+            console.log(`Saved listing: "${item.title}" with a sample review!`);
         }
 
-        console.log("Database seeded successfully with valid geocoded listings and reviews!");
-
+        console.log("Database seeded successfully with geocoded listings and reviews!");
     } catch (err) {
         console.error("Error during database seeding:", err);
     } finally {
