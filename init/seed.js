@@ -36,10 +36,10 @@ const seedSampleListings = [
             filename: "listingimage",
             url: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60"
         },
-        price: 1200,
+        price: 900,
         location: "New York City, New York",
         country: "United States",
-        category: "Iconic Cities"
+        category: "Rooms"
     },
     {
         title: "Historic Villa in Tuscany",
@@ -52,6 +52,114 @@ const seedSampleListings = [
         location: "Florence, Tuscany",
         country: "Italy",
         category: "Iconic Cities"
+    },
+    {
+        title: "Alpine Ski Chalet",
+        description: "Unplug and unwind in this peaceful mountain cabin. Surrounded by nature, it's a perfect place to recharge.",
+        image: {
+            filename: "listingimage",
+            url: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800&q=60"
+        },
+        price: 4500,
+        location: "Aspen, Colorado",
+        country: "United States",
+        category: "Mountains"
+    },
+    {
+        title: "Medieval Castle Chamber",
+        description: "Step back in time with a stay in this beautifully preserved castle suite, featuring stone walls and classic tapestries.",
+        image: {
+            filename: "listingimage",
+            url: "https://images.unsplash.com/photo-1508849789987-4e5333c12b78?auto=format&fit=crop&w=800&q=60"
+        },
+        price: 8500,
+        location: "Edinburgh, Scotland",
+        country: "United Kingdom",
+        category: "Castles"
+    },
+    {
+        title: "Tropical Oasis Pool House",
+        description: "Indulge in island living with private access to a beautiful infinity pool surrounded by lush tropical gardens.",
+        image: {
+            filename: "listingimage",
+            url: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=800&q=60"
+        },
+        price: 3000,
+        location: "Bali",
+        country: "Indonesia",
+        category: "Amazing Pools"
+    },
+    {
+        title: "Serene Lakefront Tent",
+        description: "Go glamping in style in this heavy-duty canvas tent right next to the crystal-clear waters of the lake.",
+        image: {
+            filename: "listingimage",
+            url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=60"
+        },
+        price: 600,
+        location: "Banff, Alberta",
+        country: "Canada",
+        category: "Camping"
+    },
+    {
+        title: "Organic Farmhouse Stay",
+        description: "Live the quiet life at this functioning organic farm. Fresh milk and eggs are provided every morning!",
+        image: {
+            filename: "listingimage",
+            url: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=60"
+        },
+        price: 1100,
+        location: "Pienza, Tuscany",
+        country: "Italy",
+        category: "Farms"
+    },
+    {
+        title: "Modern Glass Igloo",
+        description: "Watch the northern lights dance across the night sky directly from the comfort of your warm bed.",
+        image: {
+            filename: "listingimage",
+            url: "https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=800&q=60"
+        },
+        price: 7500,
+        location: "Tromso",
+        country: "Norway",
+        category: "Arctic"
+    },
+    {
+        title: "Luxury Dome Retreat",
+        description: "A gorgeous geodesic dome situated in the heart of the red rocks. Perfect for stargazing and hiking.",
+        image: {
+            filename: "listingimage",
+            url: "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=800&q=60"
+        },
+        price: 3800,
+        location: "Sedona, Arizona",
+        country: "United States",
+        category: "Domes"
+    },
+    {
+        title: "Classic Houseboat Cruise",
+        description: "Sleep on the canals of Amsterdam in this fully furnished modern houseboat with an outdoor deck.",
+        image: {
+            filename: "listingimage",
+            url: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=800&q=60"
+        },
+        price: 2000,
+        location: "Amsterdam",
+        country: "Netherlands",
+        category: "Boats"
+    },
+    {
+        title: "Sunset Beach Villa",
+        description: "A luxury beach house with floor-to-ceiling windows offering a panoramic view of the Arabian Sea sunset.",
+        image: {
+            filename: "listingimage",
+            url: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=800&q=60"
+        },
+        price: 5000,
+        location: "Goa",
+        country: "India",
+        category: "Trending"
     }
 ];
 
@@ -103,7 +211,7 @@ const seedDB = async () => {
 
             // 4. Add a sample review
             const sampleReview = new Review({
-                comment: "Absolutely amazing experience! The location was beautiful and clean.",
+                comment: `Absolutely amazing experience! The ${item.category} vibe here was beautiful and clean.`,
                 rating: 5,
                 author: user._id
             });
